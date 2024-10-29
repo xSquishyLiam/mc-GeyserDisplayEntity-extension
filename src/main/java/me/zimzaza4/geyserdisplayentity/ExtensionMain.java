@@ -6,6 +6,7 @@ import me.zimzaza4.geyserdisplayentity.entity.SlotDisplayEntity;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.event.subscribe.Subscribe;
+import org.geysermc.geyser.api.event.lifecycle.GeyserPostInitializeEvent;
 import org.geysermc.geyser.api.event.lifecycle.GeyserPreInitializeEvent;
 import org.geysermc.geyser.api.extension.Extension;
 import org.geysermc.geyser.entity.EntityDefinition;
@@ -25,7 +26,7 @@ public class ExtensionMain implements Extension {
 
     // From Kastle's Geyser branch
     @Subscribe
-    public void onLoad(GeyserPreInitializeEvent event) {
+    public void onLoad(GeyserPostInitializeEvent event) {
         EntityDefinition<Entity> entityBase = EntityDefinition.builder(Entity::new)
                 .addTranslator(MetadataType.BYTE, Entity::setFlags)
                 .addTranslator(MetadataType.INT, Entity::setAir) // Air/bubbles
