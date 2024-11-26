@@ -33,7 +33,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
         } else {
             custom = false;
         }
-        if (session.getItemMappings().getMapping(entityMetadata.getValue()).getJavaItem().javaIdentifier().contains("horse_armor")) {
+        if (entityMetadata.getValue() != null && session.getItemMappings().getMapping(entityMetadata.getValue()).getJavaItem().javaIdentifier().contains("horse_armor")) {
             setInvisible(true);
             this.dirtyMetadata.put(EntityDataTypes.SCALE, 0f);
         }
@@ -57,6 +57,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
             armorEquipmentPacket.setChestplate(chest);
             armorEquipmentPacket.setLeggings(ItemData.AIR);
             armorEquipmentPacket.setBody(chest); // WHY
+
             session.sendUpstreamPacket(armorEquipmentPacket);
         } else {
             MobEquipmentPacket handPacket = new MobEquipmentPacket();
