@@ -7,13 +7,12 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.event.subscribe.Subscribe;
 import org.geysermc.geyser.api.event.lifecycle.GeyserPostInitializeEvent;
-import org.geysermc.geyser.api.event.lifecycle.GeyserPreInitializeEvent;
 import org.geysermc.geyser.api.extension.Extension;
 import org.geysermc.geyser.entity.EntityDefinition;
 import org.geysermc.geyser.entity.properties.GeyserEntityProperties;
 import org.geysermc.geyser.entity.type.Entity;
 import org.geysermc.geyser.registry.Registries;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataType;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.type.EntityType;
 
 import java.util.ArrayList;
@@ -23,19 +22,20 @@ public class ExtensionMain implements Extension {
     private static EntityDefinition<ItemDisplayEntity> ITEM_DISPLAY;
     private static EntityDefinition<BlockDisplayEntity> BLOCK_DISPLAY;
 
-
     // From Kastle's Geyser branch
     @Subscribe
     public void onLoad(GeyserPostInitializeEvent event) {
+        Settings.IMP.reload(dataFolder().resolve("config.yml").toFile());
+
         EntityDefinition<Entity> entityBase = EntityDefinition.builder(Entity::new)
-                .addTranslator(MetadataType.BYTE, Entity::setFlags)
-                .addTranslator(MetadataType.INT, Entity::setAir) // Air/bubbles
-                .addTranslator(MetadataType.OPTIONAL_CHAT, Entity::setDisplayName)
-                .addTranslator(MetadataType.BOOLEAN, Entity::setDisplayNameVisible)
-                .addTranslator(MetadataType.BOOLEAN, Entity::setSilent)
-                .addTranslator(MetadataType.BOOLEAN, Entity::setGravity)
-                .addTranslator(MetadataType.POSE, (entity, entityMetadata) -> entity.setPose(entityMetadata.getValue()))
-                .addTranslator(MetadataType.INT, Entity::setFreezing)
+                .addTranslator(MetadataTypes.BYTE, Entity::setFlags)
+                .addTranslator(MetadataTypes.INT, Entity::setAir) // Air/bubbles
+                .addTranslator(MetadataTypes.OPTIONAL_CHAT, Entity::setDisplayName)
+                .addTranslator(MetadataTypes.BOOLEAN, Entity::setDisplayNameVisible)
+                .addTranslator(MetadataTypes.BOOLEAN, Entity::setSilent)
+                .addTranslator(MetadataTypes.BOOLEAN, Entity::setGravity)
+                .addTranslator(MetadataTypes.POSE, (entity, entityMetadata) -> entity.setPose(entityMetadata.getValue()))
+                .addTranslator(MetadataTypes.INT, Entity::setFreezing)
                 .build();
 
         GeyserEntityProperties.Builder displayPropBuilder = new GeyserEntityProperties.Builder()
@@ -56,10 +56,10 @@ public class ExtensionMain implements Extension {
                 .addTranslator(null) // Interpolation start ticks
                 .addTranslator(null) // Interpolation duration ID
                 .addTranslator(null) // Position/Rotation interpolation duration
-                .addTranslator(MetadataType.VECTOR3, SlotDisplayEntity::setTranslation) // Translation
-                .addTranslator(MetadataType.VECTOR3, SlotDisplayEntity::setScale) // Scale
-                .addTranslator(MetadataType.QUATERNION, SlotDisplayEntity::setLeftRotation) // Left rotation
-                .addTranslator(MetadataType.QUATERNION, SlotDisplayEntity::setRightRotation) // Right rotation
+                .addTranslator(MetadataTypes.VECTOR3, SlotDisplayEntity::setTranslation) // Translation
+                .addTranslator(MetadataTypes.VECTOR3, SlotDisplayEntity::setScale) // Scale
+                .addTranslator(MetadataTypes.QUATERNION, SlotDisplayEntity::setLeftRotation) // Left rotation
+                .addTranslator(MetadataTypes.QUATERNION, SlotDisplayEntity::setRightRotation) // Right rotation
                 .addTranslator(null) // Billboard render constraints
                 .addTranslator(null) // Brightness override
                 .addTranslator(null) // View range
@@ -74,15 +74,15 @@ public class ExtensionMain implements Extension {
                 .height(1.975f).width(0.2f)
                 .registeredProperties(displayPropBuilder.build())
                 .identifier("geyser:block_display")
-                .addTranslator(MetadataType.BLOCK_STATE, BlockDisplayEntity::setDisplayedBlockState)
+                .addTranslator(MetadataTypes.BLOCK_STATE, BlockDisplayEntity::setDisplayedBlockState)
                 .build();
         ITEM_DISPLAY = EntityDefinition.inherited(ItemDisplayEntity::new, slotDisplayBase)
                 .type(EntityType.ITEM_DISPLAY)
                 .height(1.975f).width(0.2f)
                 .registeredProperties(displayPropBuilder.build())
                 .identifier("geyser:item_display")
-                .addTranslator(MetadataType.ITEM, ItemDisplayEntity::setDisplayedItem)
-                .addTranslator(MetadataType.BYTE, ItemDisplayEntity::setDisplayType)
+                .addTranslator(MetadataTypes.ITEM, ItemDisplayEntity::setDisplayedItem)
+                .addTranslator(MetadataTypes.BYTE, ItemDisplayEntity::setDisplayType)
                 .build();
 
         Registries.ENTITY_DEFINITIONS.register(EntityType.BLOCK_DISPLAY, BLOCK_DISPLAY);

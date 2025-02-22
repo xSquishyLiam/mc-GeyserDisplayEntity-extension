@@ -1,11 +1,13 @@
 
 package me.zimzaza4.geyserdisplayentity.entity;
 
+import me.zimzaza4.geyserdisplayentity.Settings;
 import org.cloudburstmc.math.imaginary.Quaternionf;
 import org.cloudburstmc.math.matrix.Matrix3f;
 import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.math.vector.Vector4f;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
+import org.cloudburstmc.protocol.bedrock.packet.MoveEntityAbsolutePacket;
 import org.geysermc.geyser.entity.EntityDefinition;
 import org.geysermc.geyser.entity.type.Entity;
 import org.geysermc.geyser.session.GeyserSession;
@@ -28,6 +30,7 @@ public class SlotDisplayEntity extends Entity {
                              EntityDefinition<?> definition,
                              Vector3f position, Vector3f motion, float yaw, float pitch, float headYaw) {
         super(session, entityId, geyserId, uuid, definition, position, motion, yaw, pitch, headYaw);
+        position.add(0, Settings.IMP.Y_OFFSET, 0);
     }
 
     public void updateMainHand(GeyserSession session) {
@@ -192,6 +195,25 @@ public class SlotDisplayEntity extends Entity {
         propertyManager.add("geyser:r_y", y);
         propertyManager.add("geyser:r_z", z);
         updateBedrockEntityProperties();
+    }
+
+    public void moveAbsolute(Vector3f position, float yaw, float pitch, float headYaw, boolean isOnGround, boolean teleported) {
+        position = position.clone().add(0, Settings.IMP.Y_OFFSET, 0);
+        setPosition(position);
+        // Setters are intentional so it can be overridden in places like AbstractArrowEntity
+        setYaw(yaw);
+        setPitch(pitch);
+        setHeadYaw(headYaw);
+        setOnGround(isOnGround);
+
+        MoveEntityAbsolutePacket moveEntityPacket = new MoveEntityAbsolutePacket();
+        moveEntityPacket.setRuntimeEntityId(geyserId);
+        moveEntityPacket.setPosition(position);
+        moveEntityPacket.setRotation(getBedrockRotation());
+        moveEntityPacket.setOnGround(isOnGround);
+        moveEntityPacket.setTeleported(teleported);
+
+        session.sendUpstreamPacket(moveEntityPacket);
     }
 
 }
