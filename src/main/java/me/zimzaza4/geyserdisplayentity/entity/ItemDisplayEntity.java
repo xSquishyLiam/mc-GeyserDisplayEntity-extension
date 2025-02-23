@@ -10,13 +10,16 @@ import org.cloudburstmc.protocol.bedrock.data.inventory.ContainerId;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.packet.MobArmorEquipmentPacket;
 import org.cloudburstmc.protocol.bedrock.packet.MobEquipmentPacket;
+import org.cloudburstmc.protocol.bedrock.packet.MoveEntityAbsolutePacket;
 import org.geysermc.geyser.entity.EntityDefinition;
 import org.geysermc.geyser.item.type.DyeableArmorItem;
 import org.geysermc.geyser.session.GeyserSession;
+import org.geysermc.geyser.translator.item.CustomItemTranslator;
 import org.geysermc.geyser.translator.item.ItemTranslator;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.EntityMetadata;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.ByteEntityMetadata;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
+import org.geysermc.mcprotocollib.protocol.data.game.item.component.CustomModelData;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponentTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponents;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DyedItemColor;
@@ -29,10 +32,19 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
     private DisplayType displayType = DisplayType.NONE;
     private Byte color;
     private boolean custom = false;
+    private double lastOffset = 0;
+    private Settings.DisplayEntityOptions options = Settings.IMP.GENERAL;
+
     public ItemDisplayEntity(GeyserSession session, int entityId, long geyserId, UUID uuid,
                              EntityDefinition<?> definition,
                              Vector3f position, Vector3f motion, float yaw, float pitch, float headYaw) {
         super(session, entityId, geyserId, uuid, definition, position, motion, yaw, pitch, headYaw);
+
+    }
+
+    public void setOffset(double offset) {
+        moveRelative(0, offset - lastOffset, 0, pitch, yaw, false);
+        this.lastOffset = offset;
     }
 
     public void setDisplayedItem(EntityMetadata<ItemStack, ?> entityMetadata) {
@@ -47,8 +59,25 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
                     this.color = Byte.parseByte(String.valueOf(getColor(rgb)));
                 }
             }
-
         }
+        String type = session.getItemMappings().getMapping(entityMetadata.getValue().getId()).getJavaItem().javaIdentifier();
+        CustomModelData modelData = entityMetadata.getValue().getDataComponentsPatch().get(DataComponentTypes.CUSTOM_MODEL_DATA);
+
+        for (Settings.DisplayEntityMapping mapping : Settings.IMP.MAPPINGS.values()) {
+            if (mapping.TYPE.equals(type)) {
+                if (mapping.MODEL_DATA == -1) {
+                    options = mapping.OPTIONS;
+                    setOffset(options.Y_OFFSET);
+                    break;
+                }
+                if (modelData != null && Math.abs(mapping.MODEL_DATA - modelData.floats().get(0)) < 0.5) {
+                    options = mapping.OPTIONS;
+                    setOffset(options.Y_OFFSET);
+                    break;
+                }
+            }
+        }
+
         if (!item.getDefinition().getIdentifier().startsWith("minecraft:")) {
             custom = true;
             if (color != null) {
@@ -73,7 +102,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
         ItemData helmet = ItemData.AIR; // TODO
         ItemData chest = item;
 
-        if (custom) {
+        if (custom && options.HAND) {
             MobArmorEquipmentPacket armorEquipmentPacket = new MobArmorEquipmentPacket();
             armorEquipmentPacket.setRuntimeEntityId(this.geyserId);
             armorEquipmentPacket.setHelmet(helmet);
@@ -140,5 +169,24 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
         }
 
         return closestColorIndex;
+    }
+
+    public void moveAbsolute(Vector3f position, float yaw, float pitch, float headYaw, boolean isOnGround, boolean teleported) {
+        position = position.clone().add(0, options.Y_OFFSET, 0);
+        setPosition(position);
+        // Setters are intentional so it can be overridden in places like AbstractArrowEntity
+        setYaw(yaw);
+        setPitch(pitch);
+        setHeadYaw(headYaw);
+        setOnGround(isOnGround);
+
+        MoveEntityAbsolutePacket moveEntityPacket = new MoveEntityAbsolutePacket();
+        moveEntityPacket.setRuntimeEntityId(geyserId);
+        moveEntityPacket.setPosition(position);
+        moveEntityPacket.setRotation(getBedrockRotation());
+        moveEntityPacket.setOnGround(isOnGround);
+        moveEntityPacket.setTeleported(teleported);
+
+        session.sendUpstreamPacket(moveEntityPacket);
     }
 }
