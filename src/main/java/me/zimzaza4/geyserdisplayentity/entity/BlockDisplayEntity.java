@@ -3,9 +3,6 @@ package me.zimzaza4.geyserdisplayentity.entity;
 import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.protocol.bedrock.data.entity.EntityDataTypes;
 import org.geysermc.geyser.entity.EntityDefinition;
-import org.geysermc.geyser.entity.type.FallingBlockEntity;
-import org.geysermc.geyser.entity.type.MinecartEntity;
-import org.geysermc.geyser.item.type.Item;
 import org.geysermc.geyser.session.GeyserSession;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.IntEntityMetadata;
 
