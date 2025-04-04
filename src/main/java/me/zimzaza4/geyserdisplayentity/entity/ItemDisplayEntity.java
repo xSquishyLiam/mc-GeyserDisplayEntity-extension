@@ -14,7 +14,6 @@ import org.cloudburstmc.protocol.bedrock.packet.MoveEntityAbsolutePacket;
 import org.geysermc.geyser.entity.EntityDefinition;
 import org.geysermc.geyser.item.type.DyeableArmorItem;
 import org.geysermc.geyser.session.GeyserSession;
-import org.geysermc.geyser.translator.item.CustomItemTranslator;
 import org.geysermc.geyser.translator.item.ItemTranslator;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.EntityMetadata;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.ByteEntityMetadata;
@@ -22,7 +21,6 @@ import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.CustomModelData;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponentTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponents;
-import org.geysermc.mcprotocollib.protocol.data.game.item.component.DyedItemColor;
 
 import java.util.Arrays;
 import java.util.List;
@@ -53,10 +51,9 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
         if (item instanceof DyeableArmorItem) {
             @Nullable DataComponents data = entityMetadata.getValue().getDataComponentsPatch();
             if (data != null) {
-                DyedItemColor color = data.get(DataComponentTypes.DYED_COLOR);
+                Integer color = data.get(DataComponentTypes.DYED_COLOR);
                 if (color != null) {
-                    int rgb = color.getRgb();
-                    this.color = Byte.parseByte(String.valueOf(getColor(rgb)));
+                    this.color = Byte.parseByte(String.valueOf(getColor(color)));
                 }
             }
         }

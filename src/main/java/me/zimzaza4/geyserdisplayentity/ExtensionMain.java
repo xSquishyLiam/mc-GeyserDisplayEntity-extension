@@ -9,10 +9,12 @@ import org.geysermc.event.subscribe.Subscribe;
 import org.geysermc.geyser.api.event.lifecycle.GeyserPostInitializeEvent;
 import org.geysermc.geyser.api.extension.Extension;
 import org.geysermc.geyser.entity.EntityDefinition;
+import org.geysermc.geyser.entity.EntityDefinitions;
 import org.geysermc.geyser.entity.properties.GeyserEntityProperties;
 import org.geysermc.geyser.entity.type.Entity;
 import org.geysermc.geyser.registry.Registries;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataTypes;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.Pose;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.type.EntityType;
 
 import java.util.ArrayList;
@@ -30,7 +32,7 @@ public class ExtensionMain implements Extension {
         EntityDefinition<Entity> entityBase = EntityDefinition.builder(Entity::new)
                 .addTranslator(MetadataTypes.BYTE, Entity::setFlags)
                 .addTranslator(MetadataTypes.INT, Entity::setAir) // Air/bubbles
-                .addTranslator(MetadataTypes.OPTIONAL_CHAT, Entity::setDisplayName)
+                .addTranslator(MetadataTypes.OPTIONAL_COMPONENT, Entity::setDisplayName)
                 .addTranslator(MetadataTypes.BOOLEAN, Entity::setDisplayNameVisible)
                 .addTranslator(MetadataTypes.BOOLEAN, Entity::setSilent)
                 .addTranslator(MetadataTypes.BOOLEAN, Entity::setGravity)
@@ -81,7 +83,7 @@ public class ExtensionMain implements Extension {
                 .height(1.975f).width(0.2f)
                 .registeredProperties(displayPropBuilder.build())
                 .identifier("geyser:item_display")
-                .addTranslator(MetadataTypes.ITEM, ItemDisplayEntity::setDisplayedItem)
+                .addTranslator(MetadataTypes.ITEM_STACK, ItemDisplayEntity::setDisplayedItem)
                 .addTranslator(MetadataTypes.BYTE, ItemDisplayEntity::setDisplayType)
                 .build();
 
