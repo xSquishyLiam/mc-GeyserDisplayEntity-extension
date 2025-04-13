@@ -1,5 +1,6 @@
 package me.zimzaza4.geyserdisplayentity.entity;
 
+import me.zimzaza4.geyserdisplayentity.ExtensionMain;
 import me.zimzaza4.geyserdisplayentity.Settings;
 import me.zimzaza4.geyserdisplayentity.type.DisplayType;
 import me.zimzaza4.geyserdisplayentity.util.DeltaUtils;
@@ -37,7 +38,6 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
                              EntityDefinition<?> definition,
                              Vector3f position, Vector3f motion, float yaw, float pitch, float headYaw) {
         super(session, entityId, geyserId, uuid, definition, position, motion, yaw, pitch, headYaw);
-
     }
 
     public void setOffset(double offset) {
@@ -58,8 +58,11 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
             }
         }
         String type = session.getItemMappings().getMapping(entityMetadata.getValue().getId()).getJavaItem().javaIdentifier();
-        CustomModelData modelData = entityMetadata.getValue().getDataComponentsPatch().get(DataComponentTypes.CUSTOM_MODEL_DATA);
-
+        CustomModelData modelData = null;
+        @Nullable DataComponents components = entityMetadata.getValue().getDataComponentsPatch();
+        if (components != null) {
+            modelData = components.get(DataComponentTypes.CUSTOM_MODEL_DATA);
+        }
         for (Settings.DisplayEntityMapping mapping : Settings.IMP.MAPPINGS.values()) {
             if (mapping.TYPE.equals(type)) {
                 if (mapping.MODEL_DATA == -1) {
@@ -99,7 +102,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
         ItemData helmet = ItemData.AIR; // TODO
         ItemData chest = item;
 
-        if (custom && options.HAND) {
+        if (custom && !options.HAND) {
             MobArmorEquipmentPacket armorEquipmentPacket = new MobArmorEquipmentPacket();
             armorEquipmentPacket.setRuntimeEntityId(this.geyserId);
             armorEquipmentPacket.setHelmet(helmet);
