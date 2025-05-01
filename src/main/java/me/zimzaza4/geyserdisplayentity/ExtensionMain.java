@@ -10,14 +10,13 @@ import org.geysermc.geyser.api.event.lifecycle.GeyserPostInitializeEvent;
 import org.geysermc.geyser.api.extension.Extension;
 import org.geysermc.geyser.api.extension.ExtensionLogger;
 import org.geysermc.geyser.entity.EntityDefinition;
-import org.geysermc.geyser.entity.EntityDefinitions;
 import org.geysermc.geyser.entity.properties.GeyserEntityProperties;
 import org.geysermc.geyser.entity.type.Entity;
 import org.geysermc.geyser.registry.Registries;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataTypes;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.Pose;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.type.EntityType;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +29,12 @@ public class ExtensionMain implements Extension {
     @Subscribe
     public void onLoad(GeyserPostInitializeEvent event) {
         LOGGER = logger();
-        Settings.IMP.reload(dataFolder().resolve("config.yml").toFile());
+        File configFile = dataFolder().resolve("config.yml").toFile();
+        if (configFile.exists()) {
+            Settings.IMP.load(configFile);
+        } else {
+            Settings.IMP.reload(configFile);
+        }
         try {
             EntityDefinition<Entity> entityBase = EntityDefinition.builder(Entity::new)
                     .addTranslator(MetadataTypes.BYTE, Entity::setFlags)
