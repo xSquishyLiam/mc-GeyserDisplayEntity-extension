@@ -46,23 +46,38 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
     }
 
     public void setDisplayedItem(EntityMetadata<ItemStack, ?> entityMetadata) {
-        ItemData item = ItemTranslator.translateToBedrock(session, entityMetadata.getValue());
+        // null-check to avoid NPE when metadata value is missing
+        ItemStack stack = entityMetadata.getValue();
+        if (stack == null) {
+            this.item = ItemData.AIR;
+            setInvisible(true);
+            return;
+        }
+
+        ItemData item = ItemTranslator.translateToBedrock(session, stack);
         this.item = item;
+
         if (item instanceof DyeableArmorItem) {
-            @Nullable DataComponents data = entityMetadata.getValue().getDataComponentsPatch();
+            @Nullable DataComponents data = stack.getDataComponentsPatch();
             if (data != null) {
-                Integer color = data.get(DataComponentTypes.DYED_COLOR);
-                if (color != null) {
-                    this.color = Byte.parseByte(String.valueOf(getColor(color)));
+                Integer dyed = data.get(DataComponentTypes.DYED_COLOR);
+                if (dyed != null) {
+                    this.color = Byte.parseByte(String.valueOf(getColor(dyed)));
                 }
             }
         }
-        String type = session.getItemMappings().getMapping(entityMetadata.getValue().getId()).getJavaItem().javaIdentifier();
+
+        String type = session.getItemMappings()
+                .getMapping(stack.getId())
+                .getJavaItem()
+                .javaIdentifier();
+
         CustomModelData modelData = null;
-        @Nullable DataComponents components = entityMetadata.getValue().getDataComponentsPatch();
+        @Nullable DataComponents components = stack.getDataComponentsPatch();
         if (components != null) {
             modelData = components.get(DataComponentTypes.CUSTOM_MODEL_DATA);
         }
+
         for (Settings.DisplayEntityMapping mapping : Settings.IMP.MAPPINGS.values()) {
             if (mapping.TYPE.equals(type)) {
                 if (mapping.MODEL_DATA == -1) {
@@ -86,16 +101,22 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
         } else {
             custom = false;
         }
-        if (entityMetadata.getValue() != null && Settings.IMP.HIDE_TYPES.contains(session.getItemMappings().getMapping(entityMetadata.getValue()).getJavaItem().javaIdentifier())) {
+
+        // HIDE_TYPES check only if stack is present (it is)
+        String javaId = session.getItemMappings()
+                .getMapping(stack)
+                .getJavaItem()
+                .javaIdentifier();
+        if (Settings.IMP.HIDE_TYPES.contains(javaId)) {
             setInvisible(true);
             this.dirtyMetadata.put(EntityDataTypes.SCALE, 0f);
         }
+
         updateMainHand(session);
     }
 
     @Override
     public void updateMainHand(GeyserSession session) {
-
         if (!valid)
             return;
 
