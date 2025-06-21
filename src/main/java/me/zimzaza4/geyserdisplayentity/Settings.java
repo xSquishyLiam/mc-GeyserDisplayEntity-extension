@@ -17,7 +17,7 @@ public class Settings extends YamlConfig {
     public DisplayEntityOptions GENERAL;
 
     @Comment("Invisible item types")
-    public List<String> HIDE_TYPES = List.of("minecraft:leather_horse_armor");
+    public List<String> HIDE_TYPES = List.of("minecraft:leather_horse_armor", "minecraft:bone");
 
     @Comment("Mappings")
     public Map<String, DisplayEntityMapping> MAPPINGS = new HashMap<>(Map.of("example", new DisplayEntityMapping()));
