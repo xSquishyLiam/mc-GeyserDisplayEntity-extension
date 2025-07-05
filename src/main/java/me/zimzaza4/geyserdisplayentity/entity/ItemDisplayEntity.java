@@ -46,17 +46,16 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
     }
 
     public void setDisplayedItem(EntityMetadata<ItemStack, ?> entityMetadata) {
-        // null-check to avoid NPE when metadata value is missing
         ItemStack stack = entityMetadata.getValue();
         if (stack == null) {
             this.item = ItemData.AIR;
             setInvisible(true);
             return;
         }
-
+    
         ItemData item = ItemTranslator.translateToBedrock(session, stack);
         this.item = item;
-
+    
         if (item instanceof DyeableArmorItem) {
             @Nullable DataComponents data = stack.getDataComponentsPatch();
             if (data != null) {
@@ -66,33 +65,37 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
                 }
             }
         }
-
+    
         String type = session.getItemMappings()
                 .getMapping(stack.getId())
                 .getJavaItem()
                 .javaIdentifier();
-
+    
         CustomModelData modelData = null;
         @Nullable DataComponents components = stack.getDataComponentsPatch();
         if (components != null) {
             modelData = components.get(DataComponentTypes.CUSTOM_MODEL_DATA);
         }
-
+    
         for (Settings.DisplayEntityMapping mapping : Settings.IMP.MAPPINGS.values()) {
             if (mapping.TYPE.equals(type)) {
                 if (mapping.MODEL_DATA == -1) {
-                    options = mapping.OPTIONS;
-                    setOffset(options.Y_OFFSET);
+                    if (mapping.OPTIONS != null) {
+                        options = mapping.OPTIONS;
+                        setOffset(options.Y_OFFSET);
+                    }
                     break;
                 }
                 if (modelData != null && Math.abs(mapping.MODEL_DATA - modelData.floats().get(0)) < 0.5) {
-                    options = mapping.OPTIONS;
-                    setOffset(options.Y_OFFSET);
+                    if (mapping.OPTIONS != null) {
+                        options = mapping.OPTIONS;
+                        setOffset(options.Y_OFFSET);
+                    }
                     break;
                 }
             }
         }
-
+    
         if (!item.getDefinition().getIdentifier().startsWith("minecraft:")) {
             custom = true;
             if (color != null) {
@@ -101,7 +104,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
         } else {
             custom = false;
         }
-
+    
         // HIDE_TYPES check only if stack is present (it is)
         String javaId = session.getItemMappings()
                 .getMapping(stack)
@@ -111,7 +114,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
             setInvisible(true);
             this.dirtyMetadata.put(EntityDataTypes.SCALE, 0f);
         }
-
+    
         updateMainHand(session);
     }
 
@@ -193,21 +196,24 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
     }
 
     public void moveAbsolute(Vector3f position, float yaw, float pitch, float headYaw, boolean isOnGround, boolean teleported) {
-        position = position.clone().add(0, options.Y_OFFSET, 0);
+        double yOffset = (options != null) ? options.Y_OFFSET : 0;
+    
+        position = position.clone().add(0, yOffset, 0);
+    
         setPosition(position);
-        // Setters are intentional so it can be overridden in places like AbstractArrowEntity
         setYaw(yaw);
         setPitch(pitch);
         setHeadYaw(headYaw);
         setOnGround(isOnGround);
-
+    
         MoveEntityAbsolutePacket moveEntityPacket = new MoveEntityAbsolutePacket();
         moveEntityPacket.setRuntimeEntityId(geyserId);
         moveEntityPacket.setPosition(position);
         moveEntityPacket.setRotation(getBedrockRotation());
         moveEntityPacket.setOnGround(isOnGround);
         moveEntityPacket.setTeleported(teleported);
-
+    
         session.sendUpstreamPacket(moveEntityPacket);
     }
+
 }
