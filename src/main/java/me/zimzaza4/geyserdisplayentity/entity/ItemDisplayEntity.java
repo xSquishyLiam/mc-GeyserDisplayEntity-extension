@@ -32,7 +32,6 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
     private Byte color;
     private boolean custom = false;
     private double lastOffset = 0;
-    private Settings.DisplayEntityOptions options = Settings.IMP.GENERAL;
 
     public ItemDisplayEntity(GeyserSession session, int entityId, long geyserId, UUID uuid,
                              EntityDefinition<?> definition,

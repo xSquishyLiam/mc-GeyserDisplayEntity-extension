@@ -1,7 +1,5 @@
 package me.zimzaza4.geyserdisplayentity;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import net.elytrium.commons.config.YamlConfig;
 
 import java.util.HashMap;
@@ -37,7 +35,7 @@ public class Settings extends YamlConfig {
         @Comment("The y-offset of display entity")
         public double Y_OFFSET = -0.5;
         @Comment("Use entity scale, instead of entity properties")
-        public boolean VANILLA_SCALE = false;
+        public boolean VANILLA_SCALE = true;
         @Comment("Equip custom items (items with custom mapping) to hand")
         public boolean HAND = false;
     }

@@ -1,6 +1,6 @@
 name: GeyserDisplayEntity
 id: geyserdisplayentity
 main: me.zimzaza4.geyserdisplayentity.ExtensionMain
-api: 1.0.0
+api: 2.4.1
 version: 1.0.0
 authors: [zimzaza4]
