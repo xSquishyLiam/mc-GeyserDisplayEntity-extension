@@ -35,6 +35,7 @@ public class ExtensionMain implements Extension {
         } else {
             Settings.IMP.reload(configFile);
         }
+
         try {
             EntityDefinition<Entity> entityBase = EntityDefinition.builder(Entity::new)
                     .addTranslator(MetadataTypes.BYTE, Entity::setFlags)
