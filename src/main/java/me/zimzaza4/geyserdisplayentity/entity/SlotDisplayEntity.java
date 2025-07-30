@@ -118,6 +118,7 @@ public class SlotDisplayEntity extends Entity {
         Vector3f vector3f = this.scale;
         float scale = (vector3f.getX() + vector3f.getY() + vector3f.getZ()) / 3;
         this.dirtyMetadata.put(EntityDataTypes.SCALE, scale);
+        super.updateBedrockMetadata();
     }
 
     public void setLeftRotation(EntityMetadata<Quaternionf, ?> entityMetadata) {
