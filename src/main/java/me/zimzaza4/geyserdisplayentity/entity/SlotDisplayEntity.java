@@ -102,17 +102,15 @@ public class SlotDisplayEntity extends Entity {
     }
 
     public void setScale(EntityMetadata<Vector3f, ?> entityMetadata) {
-        try {
-            if (options.VANILLA_SCALE) {
-                applyScale();
-            }
-            this.scale = entityMetadata.getValue();
-            propertyManager.add("geyser:s_x", scale.getX());
-            propertyManager.add("geyser:s_y", scale.getY());
-            propertyManager.add("geyser:s_z", scale.getZ());
-        } catch (Throwable t) {
-            t.printStackTrace();
+
+        this.scale = entityMetadata.getValue();
+
+        if (options.VANILLA_SCALE) {
+            applyScale();
         }
+        propertyManager.add("geyser:s_x", scale.getX());
+        propertyManager.add("geyser:s_y", scale.getY());
+        propertyManager.add("geyser:s_z", scale.getZ());
     }
 
 
