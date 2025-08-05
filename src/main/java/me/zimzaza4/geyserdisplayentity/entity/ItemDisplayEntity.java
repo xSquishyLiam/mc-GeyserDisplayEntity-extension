@@ -31,6 +31,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
     private DisplayType displayType = DisplayType.NONE;
     private Byte color;
     private boolean custom = false;
+    private boolean needHide = false;
     private double lastOffset = 0;
 
     public ItemDisplayEntity(GeyserSession session, int entityId, long geyserId, UUID uuid,
@@ -111,10 +112,22 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
                 .javaIdentifier();
         if (Settings.IMP.HIDE_TYPES.contains(javaId)) {
             setInvisible(true);
+            needHide = true;
             this.dirtyMetadata.put(EntityDataTypes.SCALE, 0f);
+        } else {
+            needHide = false;
         }
     
         updateMainHand(session);
+    }
+
+    @Override
+    protected void applyScale() {
+        if (needHide) {
+            this.dirtyMetadata.put(EntityDataTypes.SCALE, 0f);
+        } else {
+            super.applyScale();
+        }
     }
 
     @Override
