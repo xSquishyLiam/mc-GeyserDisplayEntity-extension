@@ -12,8 +12,7 @@ public class BlockDisplayEntity extends SlotDisplayEntity {
 
     // TODO
     // Kastle hasnt finish it
-    public BlockDisplayEntity(GeyserSession session, int entityId, long geyserId, UUID uuid, EntityDefinition<?> definition,
-                              Vector3f position, Vector3f motion, float yaw, float pitch, float headYaw) {
+    public BlockDisplayEntity(GeyserSession session, int entityId, long geyserId, UUID uuid, EntityDefinition<?> definition, Vector3f position, Vector3f motion, float yaw, float pitch, float headYaw) {
         super(session, entityId, geyserId, uuid, definition, position, motion, yaw, pitch, headYaw);
     }
 

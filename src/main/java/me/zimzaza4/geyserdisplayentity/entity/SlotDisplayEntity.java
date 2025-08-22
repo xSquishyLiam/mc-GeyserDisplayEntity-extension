@@ -1,8 +1,7 @@
 
 package me.zimzaza4.geyserdisplayentity.entity;
 
-import me.zimzaza4.geyserdisplayentity.ExtensionMain;
-import me.zimzaza4.geyserdisplayentity.Settings;
+import me.zimzaza4.geyserdisplayentity.GeyserDisplayEntity;
 import org.cloudburstmc.math.imaginary.Quaternionf;
 import org.cloudburstmc.math.matrix.Matrix3f;
 import org.cloudburstmc.math.vector.Vector3f;
@@ -18,6 +17,8 @@ import java.util.UUID;
 
 public class SlotDisplayEntity extends Entity {
 
+    protected GeyserDisplayEntity extension = GeyserDisplayEntity.getExtension();
+
     protected ItemData item = ItemData.AIR;
     protected Vector3f translation = Vector3f.from(0, 0, 0);
     protected Vector3f scale = Vector3f.from(1, 1, 1);
@@ -26,16 +27,12 @@ public class SlotDisplayEntity extends Entity {
     protected boolean validQScale = false;
     protected boolean rotationUpdated = false;
 
-    protected Settings.DisplayEntityOptions options = Settings.IMP.GENERAL;
-
-    public SlotDisplayEntity(GeyserSession session, int entityId, long geyserId, UUID uuid,
-                             EntityDefinition<?> definition,
-                             Vector3f position, Vector3f motion, float yaw, float pitch, float headYaw) {
+    public SlotDisplayEntity(GeyserSession session, int entityId, long geyserId, UUID uuid, EntityDefinition<?> definition, Vector3f position, Vector3f motion, float yaw, float pitch, float headYaw) {
         super(session, entityId, geyserId, uuid, definition, position, motion, yaw, pitch, headYaw);
-
     }
 
     public void updateMainHand(GeyserSession session) {
+
     }
 
     @Override
@@ -58,12 +55,7 @@ public class SlotDisplayEntity extends Entity {
         propertyManager.add("geyser:s_y", scale.getY());
         propertyManager.add("geyser:s_z", scale.getZ());
 
-        if (options == null) {
-            options = Settings.IMP.GENERAL;
-        }
-        if (options.VANILLA_SCALE) {
-            applyScale();
-        }
+        if (extension.getConfigManager().getConfig().getBoolean("displayentityoptions.vanilla-scale")) applyScale();
 
         propertyManager.add("geyser:r_x", MathUtils.wrapDegrees(rotation.getX()));
         propertyManager.add("geyser:r_y", MathUtils.wrapDegrees(-rotation.getY()));
@@ -76,9 +68,7 @@ public class SlotDisplayEntity extends Entity {
 
     @Override
     public void updateBedrockEntityProperties() {
-        if (!valid) {
-            return;
-        }
+        if (!valid) return;
 
         if (propertyManager.hasProperties()) {
             rotationUpdated = false;
@@ -105,9 +95,8 @@ public class SlotDisplayEntity extends Entity {
 
         this.scale = entityMetadata.getValue();
 
-        if (options.VANILLA_SCALE) {
-            applyScale();
-        }
+        if (extension.getConfigManager().getConfig().getBoolean("displayentityoptions.vanilla-scale")) applyScale();
+
         propertyManager.add("geyser:s_x", scale.getX());
         propertyManager.add("geyser:s_y", scale.getY());
         propertyManager.add("geyser:s_z", scale.getZ());

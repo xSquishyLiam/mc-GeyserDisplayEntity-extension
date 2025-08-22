@@ -1,10 +1,9 @@
 package me.zimzaza4.geyserdisplayentity.entity;
 
-import me.zimzaza4.geyserdisplayentity.ExtensionMain;
-import me.zimzaza4.geyserdisplayentity.Settings;
+import me.zimzaza4.geyserdisplayentity.GeyserDisplayEntity;
 import me.zimzaza4.geyserdisplayentity.type.DisplayType;
 import me.zimzaza4.geyserdisplayentity.util.DeltaUtils;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import me.zimzaza4.geyserdisplayentity.util.FileConfiguration;
 import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.protocol.bedrock.data.entity.EntityDataTypes;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ContainerId;
@@ -28,15 +27,16 @@ import java.util.List;
 import java.util.UUID;
 
 public class ItemDisplayEntity extends SlotDisplayEntity {
+
+    private final GeyserDisplayEntity extension = GeyserDisplayEntity.getExtension();
+
     private DisplayType displayType = DisplayType.NONE;
     private Byte color;
     private boolean custom = false;
     private boolean needHide = false;
     private double lastOffset = 0;
 
-    public ItemDisplayEntity(GeyserSession session, int entityId, long geyserId, UUID uuid,
-                             EntityDefinition<?> definition,
-                             Vector3f position, Vector3f motion, float yaw, float pitch, float headYaw) {
+    public ItemDisplayEntity(GeyserSession session, int entityId, long geyserId, UUID uuid, EntityDefinition<?> definition, Vector3f position, Vector3f motion, float yaw, float pitch, float headYaw) {
         super(session, entityId, geyserId, uuid, definition, position, motion, yaw, pitch, headYaw);
     }
 
@@ -57,7 +57,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
         this.item = item;
     
         if (item instanceof DyeableArmorItem) {
-            @Nullable DataComponents data = stack.getDataComponentsPatch();
+            DataComponents data = stack.getDataComponentsPatch();
             if (data != null) {
                 Integer dyed = data.get(DataComponentTypes.DYED_COLOR);
                 if (dyed != null) {
@@ -72,27 +72,26 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
                 .javaIdentifier();
     
         CustomModelData modelData = null;
-        @Nullable DataComponents components = stack.getDataComponentsPatch();
-        if (components != null) {
-            modelData = components.get(DataComponentTypes.CUSTOM_MODEL_DATA);
-        }
-    
-        for (Settings.DisplayEntityMapping mapping : Settings.IMP.MAPPINGS.values()) {
-            if (mapping.TYPE.equals(type)) {
-                if (mapping.MODEL_DATA == -1) {
-                    if (mapping.OPTIONS != null) {
-                        options = mapping.OPTIONS;
-                        setOffset(options.Y_OFFSET);
-                    }
-                    break;
-                }
-                if (modelData != null && Math.abs(mapping.MODEL_DATA - modelData.floats().get(0)) < 0.5) {
-                    if (mapping.OPTIONS != null) {
-                        options = mapping.OPTIONS;
-                        setOffset(options.Y_OFFSET);
-                    }
-                    break;
-                }
+        DataComponents components = stack.getDataComponentsPatch();
+        if (components != null) modelData = components.get(DataComponentTypes.CUSTOM_MODEL_DATA);
+
+        FileConfiguration mappingsConfig = extension.getConfigManager().getConfig().getConfigurationSection("mappings");
+
+        for (Object mappingKey : mappingsConfig.getRootNode().childrenMap().keySet()) {
+            String mappingString = mappingKey.toString();
+            FileConfiguration mappingConfig = mappingsConfig.getConfigurationSection(mappingString);
+            if (mappingConfig == null) continue;
+
+            if (!mappingConfig.getString("type").equals(type)) continue;
+
+            if (mappingConfig.getInt("model-data") == -1) {
+                setOffset(mappingConfig.getDouble("displayentityoptions.y-offset"));
+                break;
+            }
+
+            if (modelData != null && Math.abs(mappingConfig.getInt("model-data") - modelData.floats().get(0)) < 0.5) {
+                setOffset(mappingConfig.getDouble("displayentityoptions.y-offset"));
+                break;
             }
         }
     
@@ -106,11 +105,12 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
         }
     
         // HIDE_TYPES check only if stack is present (it is)
-        String javaId = session.getItemMappings()
+        String javaID = session.getItemMappings()
                 .getMapping(stack)
                 .getJavaItem()
                 .javaIdentifier();
-        if (Settings.IMP.HIDE_TYPES.contains(javaId)) {
+
+        if (extension.getConfigManager().getConfig().getStringList("hide-types").contains(javaID)) {
             setInvisible(true);
             needHide = true;
             this.dirtyMetadata.put(EntityDataTypes.SCALE, 0f);
@@ -138,7 +138,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
         ItemData helmet = ItemData.AIR; // TODO
         ItemData chest = item;
 
-        if (custom && !options.HAND) {
+        if (custom && !extension.getConfigManager().getConfig().getBoolean("displayentityoptions.hand")) {
             MobArmorEquipmentPacket armorEquipmentPacket = new MobArmorEquipmentPacket();
             armorEquipmentPacket.setRuntimeEntityId(this.geyserId);
             armorEquipmentPacket.setHelmet(helmet);
@@ -208,7 +208,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
     }
 
     public void moveAbsolute(Vector3f position, float yaw, float pitch, float headYaw, boolean isOnGround, boolean teleported) {
-        double yOffset = (options != null) ? options.Y_OFFSET : 0;
+        double yOffset = extension.getConfigManager().getConfig().getDouble("displayentityoptions.y-offset");
     
         position = position.clone().add(0, yOffset, 0);
     
