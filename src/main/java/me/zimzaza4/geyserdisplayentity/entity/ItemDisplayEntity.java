@@ -28,8 +28,6 @@ import java.util.UUID;
 
 public class ItemDisplayEntity extends SlotDisplayEntity {
 
-    private final GeyserDisplayEntity extension = GeyserDisplayEntity.getExtension();
-
     private DisplayType displayType = DisplayType.NONE;
     private Byte color;
     private boolean custom = false;
@@ -75,7 +73,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
         DataComponents components = stack.getDataComponentsPatch();
         if (components != null) modelData = components.get(DataComponentTypes.CUSTOM_MODEL_DATA);
 
-        FileConfiguration mappingsConfig = extension.getConfigManager().getConfig().getConfigurationSection("mappings");
+        FileConfiguration mappingsConfig = GeyserDisplayEntity.getExtension().getConfigManager().getConfig().getConfigurationSection("mappings");
 
         for (Object mappingKey : mappingsConfig.getRootNode().childrenMap().keySet()) {
             String mappingString = mappingKey.toString();
@@ -110,7 +108,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
                 .getJavaItem()
                 .javaIdentifier();
 
-        if (extension.getConfigManager().getConfig().getStringList("hide-types").contains(javaID)) {
+        if (GeyserDisplayEntity.getExtension().getConfigManager().getConfig().getStringList("hide-types").contains(javaID)) {
             setInvisible(true);
             needHide = true;
             this.dirtyMetadata.put(EntityDataTypes.SCALE, 0f);
@@ -138,7 +136,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
         ItemData helmet = ItemData.AIR; // TODO
         ItemData chest = item;
 
-        if (custom && !extension.getConfigManager().getConfig().getBoolean("displayentityoptions.hand")) {
+        if (custom && !GeyserDisplayEntity.getExtension().getConfigManager().getConfig().getBoolean("displayentityoptions.hand")) {
             MobArmorEquipmentPacket armorEquipmentPacket = new MobArmorEquipmentPacket();
             armorEquipmentPacket.setRuntimeEntityId(this.geyserId);
             armorEquipmentPacket.setHelmet(helmet);
@@ -208,7 +206,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
     }
 
     public void moveAbsolute(Vector3f position, float yaw, float pitch, float headYaw, boolean isOnGround, boolean teleported) {
-        double yOffset = extension.getConfigManager().getConfig().getDouble("displayentityoptions.y-offset");
+        double yOffset = GeyserDisplayEntity.getExtension().getConfigManager().getConfig().getDouble("displayentityoptions.y-offset");
     
         position = position.clone().add(0, yOffset, 0);
     

@@ -17,8 +17,6 @@ import java.util.UUID;
 
 public class SlotDisplayEntity extends Entity {
 
-    protected GeyserDisplayEntity extension = GeyserDisplayEntity.getExtension();
-
     protected ItemData item = ItemData.AIR;
     protected Vector3f translation = Vector3f.from(0, 0, 0);
     protected Vector3f scale = Vector3f.from(1, 1, 1);
@@ -55,7 +53,7 @@ public class SlotDisplayEntity extends Entity {
         propertyManager.add("geyser:s_y", scale.getY());
         propertyManager.add("geyser:s_z", scale.getZ());
 
-        if (extension.getConfigManager().getConfig().getBoolean("displayentityoptions.vanilla-scale")) applyScale();
+        if (GeyserDisplayEntity.getExtension().getConfigManager().getConfig().getBoolean("displayentityoptions.vanilla-scale")) applyScale();
 
         propertyManager.add("geyser:r_x", MathUtils.wrapDegrees(rotation.getX()));
         propertyManager.add("geyser:r_y", MathUtils.wrapDegrees(-rotation.getY()));
@@ -95,7 +93,7 @@ public class SlotDisplayEntity extends Entity {
 
         this.scale = entityMetadata.getValue();
 
-        if (extension.getConfigManager().getConfig().getBoolean("displayentityoptions.vanilla-scale")) applyScale();
+        if (GeyserDisplayEntity.getExtension().getConfigManager().getConfig().getBoolean("displayentityoptions.vanilla-scale")) applyScale();
 
         propertyManager.add("geyser:s_x", scale.getX());
         propertyManager.add("geyser:s_y", scale.getY());
