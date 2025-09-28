@@ -79,14 +79,18 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
             if (!mappingConfig.getString("type").equals(type)) continue;
 
             if (mappingConfig.getInt("model-data") == -1) {
-                setOffset(mappingConfig.getDouble("displayentityoptions.y-offset"));
+                this.config = mappingConfig.getConfigurationSection("displayentityoptions");
+                setOffset(this.config.getDouble("y-offset"));
                 break;
             }
 
             if (modelData != null && Math.abs(mappingConfig.getInt("model-data") - modelData.floats().get(0)) < 0.5) {
-                setOffset(mappingConfig.getDouble("displayentityoptions.y-offset"));
+                this.config = mappingConfig.getConfigurationSection("displayentityoptions");
+                setOffset(this.config.getDouble("y-offset"));
                 break;
             }
+
+            GeyserDisplayEntity.getExtension().logger().info("loaded " + mappingString + " Mapping");
         }
     
         if (!item.getDefinition().getIdentifier().startsWith("minecraft:")) {
@@ -101,7 +105,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
         // HIDE_TYPES check only if stack is present (it is)
         String javaID = this.session.getItemMappings().getMapping(stack).getJavaItem().javaIdentifier();
 
-        if (GeyserDisplayEntity.getExtension().getConfigManager().getConfig().getStringList("hide-types").contains(javaID)) {
+        if (GeyserDisplayEntity.getExtension().getConfigManager().getConfig().getConfigurationSection("general").getStringList("hide-types").contains(javaID)) {
             setInvisible(true);
             this.needHide = true;
             this.dirtyMetadata.put(EntityDataTypes.SCALE, 0f);
@@ -128,7 +132,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
         ItemData helmet = ItemData.AIR; // TODO
         ItemData chest = this.item;
 
-        if (this.custom && !GeyserDisplayEntity.getExtension().getConfigManager().getConfig().getBoolean("general.hand")) {
+        if (this.custom && !config.getBoolean("hand")) {
             MobArmorEquipmentPacket armorEquipmentPacket = new MobArmorEquipmentPacket();
             armorEquipmentPacket.setRuntimeEntityId(this.geyserId);
             armorEquipmentPacket.setHelmet(helmet);
@@ -198,7 +202,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
     }
 
     public void moveAbsolute(Vector3f position, float yaw, float pitch, float headYaw, boolean isOnGround, boolean teleported) {
-        double yOffset = GeyserDisplayEntity.getExtension().getConfigManager().getConfig().getDouble("general.y-offset");
+        double yOffset = this.config.getDouble("y-offset");
     
         position = position.clone().add(0, yOffset, 0);
     
@@ -214,5 +218,4 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
 
         this.session.sendUpstreamPacket(moveEntityPacket);
     }
-
 }

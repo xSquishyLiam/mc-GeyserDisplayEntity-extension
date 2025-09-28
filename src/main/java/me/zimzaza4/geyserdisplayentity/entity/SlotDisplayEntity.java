@@ -2,6 +2,7 @@
 package me.zimzaza4.geyserdisplayentity.entity;
 
 import me.zimzaza4.geyserdisplayentity.GeyserDisplayEntity;
+import me.zimzaza4.geyserdisplayentity.util.FileConfiguration;
 import org.cloudburstmc.math.imaginary.Quaternionf;
 import org.cloudburstmc.math.matrix.Matrix3f;
 import org.cloudburstmc.math.vector.Vector3f;
@@ -25,6 +26,8 @@ public class SlotDisplayEntity extends Entity {
     protected float qScale = 1F;
     protected boolean validQScale = false;
     protected boolean rotationUpdated = false;
+
+    protected FileConfiguration config = GeyserDisplayEntity.getExtension().getConfigManager().getConfig().getConfigurationSection("general");
 
     protected Quaternionf lastLeft = Quaternionf.IDENTITY;
     protected Quaternionf lastRight = Quaternionf.IDENTITY;
@@ -57,7 +60,8 @@ public class SlotDisplayEntity extends Entity {
         this.propertyManager.add("geyser:s_y", this.scale.getY());
         this.propertyManager.add("geyser:s_z", this.scale.getZ());
 
-        if (GeyserDisplayEntity.getExtension().getConfigManager().getConfig().getBoolean("general.vanilla-scale")) applyScale();
+        if (this.config == null) this.config = GeyserDisplayEntity.getExtension().getConfigManager().getConfig().getConfigurationSection("general");
+        if (this.config.getBoolean("vanilla-scale")) applyScale();
 
         this.propertyManager.add("geyser:r_x", MathUtils.wrapDegrees(this.rotation.getX()));
         this.propertyManager.add("geyser:r_y", MathUtils.wrapDegrees(-this.rotation.getY()));
@@ -96,7 +100,7 @@ public class SlotDisplayEntity extends Entity {
     public void setScale(EntityMetadata<Vector3f, ?> entityMetadata) {
         this.scale = entityMetadata.getValue();
 
-        if (GeyserDisplayEntity.getExtension().getConfigManager().getConfig().getBoolean("general.vanilla-scale")) applyScale();
+        if (config.getBoolean("vanilla-scale")) applyScale();
 
         this.propertyManager.add("geyser:s_x", this.scale.getX());
         this.propertyManager.add("geyser:s_y", this.scale.getY());
