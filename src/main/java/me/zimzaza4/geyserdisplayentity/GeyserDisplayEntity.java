@@ -9,7 +9,6 @@ import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.event.subscribe.Subscribe;
 import org.geysermc.geyser.api.event.lifecycle.GeyserPostInitializeEvent;
 import org.geysermc.geyser.api.extension.Extension;
-import org.geysermc.geyser.api.extension.ExtensionLogger;
 import org.geysermc.geyser.entity.EntityDefinition;
 import org.geysermc.geyser.entity.properties.GeyserEntityProperties;
 import org.geysermc.geyser.entity.type.Entity;
@@ -118,9 +117,7 @@ public class GeyserDisplayEntity implements Extension {
                 .putBoolean("summonable", false).build()
         );
 
-        Registries.BEDROCK_ENTITY_IDENTIFIERS.set(NbtMap.builder()
-                .putList("idlist", NbtType.COMPOUND, idList).build()
-        );
+        Registries.BEDROCK_ENTITY_IDENTIFIERS.set(NbtMap.builder().putList("idlist", NbtType.COMPOUND, idList).build());
     }
 
     private void loadManagers() {

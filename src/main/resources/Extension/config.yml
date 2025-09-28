@@ -1,5 +1,5 @@
 # General display options
-displayentityoptions:
+general:
   # The y-offset of display entity
   y-offset: -0.5
   # Use entity scale, instead of entity properties
