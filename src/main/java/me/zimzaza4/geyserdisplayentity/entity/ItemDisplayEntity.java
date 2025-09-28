@@ -89,8 +89,6 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
                 setOffset(this.config.getDouble("y-offset"));
                 break;
             }
-
-            GeyserDisplayEntity.getExtension().logger().info("loaded " + mappingString + " Mapping");
         }
     
         if (!item.getDefinition().getIdentifier().startsWith("minecraft:")) {
