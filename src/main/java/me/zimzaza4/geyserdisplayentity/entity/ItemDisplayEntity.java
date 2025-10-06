@@ -39,7 +39,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
     }
 
     public void setOffset(double offset) {
-        moveRelative(0, offset - this.lastOffset, 0, this.pitch, this.yaw, false);
+        moveRelative(0, offset - lastOffset, 0, pitch, yaw, false);
         this.lastOffset = offset;
     }
 
@@ -51,7 +51,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
             return;
         }
     
-        ItemData item = ItemTranslator.translateToBedrock(this.session, stack);
+        ItemData item = ItemTranslator.translateToBedrock(session, stack);
         this.item = item;
     
         if (item instanceof DyeableArmorItem) {
@@ -64,7 +64,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
             }
         }
     
-        String type = this.session.getItemMappings().getMapping(stack.getId()).getJavaItem().javaIdentifier();
+        String type = session.getItemMappings().getMapping(stack.getId()).getJavaItem().javaIdentifier();
     
         CustomModelData modelData = null;
         DataComponents components = stack.getDataComponentsPatch();
@@ -79,36 +79,36 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
             if (!mappingConfig.getString("type").equals(type)) continue;
 
             if (mappingConfig.getInt("model-data") == -1) {
-                this.config = mappingConfig.getConfigurationSection("displayentityoptions");
-                setOffset(this.config.getDouble("y-offset"));
+                config = mappingConfig.getConfigurationSection("displayentityoptions");
+                setOffset(config.getDouble("y-offset"));
                 break;
             }
 
             if (modelData != null && Math.abs(mappingConfig.getInt("model-data") - modelData.floats().get(0)) < 0.5) {
-                this.config = mappingConfig.getConfigurationSection("displayentityoptions");
-                setOffset(this.config.getDouble("y-offset"));
+                config = mappingConfig.getConfigurationSection("displayentityoptions");
+                setOffset(config.getDouble("y-offset"));
                 break;
             }
         }
     
         if (!item.getDefinition().getIdentifier().startsWith("minecraft:")) {
-            this.custom = true;
-            if (this.color != null) {
-                getDirtyMetadata().put(EntityDataTypes.COLOR, this.color);
+            custom = true;
+            if (color != null) {
+                getDirtyMetadata().put(EntityDataTypes.COLOR, color);
             }
         } else {
-            this.custom = false;
+            custom = false;
         }
     
         // HIDE_TYPES check only if stack is present (it is)
-        String javaID = this.session.getItemMappings().getMapping(stack).getJavaItem().javaIdentifier();
+        String javaID = session.getItemMappings().getMapping(stack).getJavaItem().javaIdentifier();
 
-        if (GeyserDisplayEntity.getExtension().getConfigManager().getConfig().getConfigurationSection("general").getStringList("hide-types").contains(javaID)) {
+        if (GeyserDisplayEntity.getExtension().getConfigManager().getConfig().getStringList("hide-types").contains(javaID)) {
             setInvisible(true);
-            this.needHide = true;
+            needHide = true;
             this.dirtyMetadata.put(EntityDataTypes.SCALE, 0f);
         } else {
-            this.needHide = false;
+            needHide = false;
         }
     
         updateMainHand(this.session);
@@ -116,7 +116,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
 
     @Override
     protected void applyScale() {
-        if (this.needHide) {
+        if (needHide) {
             this.dirtyMetadata.put(EntityDataTypes.SCALE, 0f);
         } else {
             super.applyScale();
@@ -130,9 +130,9 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
         ItemData helmet = ItemData.AIR; // TODO
         ItemData chest = this.item;
 
-        if (this.custom && !config.getBoolean("hand")) {
+        if (custom && !config.getBoolean("hand")) {
             MobArmorEquipmentPacket armorEquipmentPacket = new MobArmorEquipmentPacket();
-            armorEquipmentPacket.setRuntimeEntityId(this.geyserId);
+            armorEquipmentPacket.setRuntimeEntityId(geyserId);
             armorEquipmentPacket.setHelmet(helmet);
             armorEquipmentPacket.setBoots(ItemData.AIR);
             armorEquipmentPacket.setChestplate(chest);
@@ -142,8 +142,8 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
             session.sendUpstreamPacket(armorEquipmentPacket);
         } else {
             MobEquipmentPacket handPacket = new MobEquipmentPacket();
-            handPacket.setRuntimeEntityId(this.geyserId);
-            handPacket.setItem(this.item);
+            handPacket.setRuntimeEntityId(geyserId);
+            handPacket.setItem(item);
             handPacket.setHotbarSlot(-1);
             handPacket.setInventorySlot(0);
             handPacket.setContainerId(ContainerId.INVENTORY);
@@ -154,7 +154,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
 
     public void setDisplayType(ByteEntityMetadata entityMetadata) {
         int i = entityMetadata.getPrimitiveValue();
-        this.displayType = DisplayType.values()[i];
+        displayType = DisplayType.values()[i];
     }
 
     private static int getColor(int argb) {
@@ -200,7 +200,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
     }
 
     public void moveAbsolute(Vector3f position, float yaw, float pitch, float headYaw, boolean isOnGround, boolean teleported) {
-        double yOffset = this.config.getDouble("y-offset");
+        double yOffset = config.getDouble("y-offset");
     
         position = position.clone().add(0, yOffset, 0);
     
@@ -208,12 +208,12 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
         setOnGround(isOnGround);
     
         MoveEntityAbsolutePacket moveEntityPacket = new MoveEntityAbsolutePacket();
-        moveEntityPacket.setRuntimeEntityId(this.geyserId);
+        moveEntityPacket.setRuntimeEntityId(geyserId);
         moveEntityPacket.setPosition(position);
         moveEntityPacket.setRotation(getBedrockRotation());
         moveEntityPacket.setOnGround(isOnGround);
         moveEntityPacket.setTeleported(teleported);
 
-        this.session.sendUpstreamPacket(moveEntityPacket);
+        session.sendUpstreamPacket(moveEntityPacket);
     }
 }

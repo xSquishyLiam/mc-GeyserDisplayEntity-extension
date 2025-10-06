@@ -27,7 +27,7 @@ public class SlotDisplayEntity extends Entity {
     protected boolean validQScale = false;
     protected boolean rotationUpdated = false;
 
-    protected FileConfiguration config = GeyserDisplayEntity.getExtension().getConfigManager().getConfig().getConfigurationSection("general");
+    protected FileConfiguration config;
 
     protected Quaternionf lastLeft = Quaternionf.IDENTITY;
     protected Quaternionf lastRight = Quaternionf.IDENTITY;
@@ -44,41 +44,42 @@ public class SlotDisplayEntity extends Entity {
     public void initializeMetadata() {
         super.initializeMetadata();
 
-        this.item = ItemData.AIR;
-        this.translation = Vector3f.from(0, 0, 0);
-        this.scale = Vector3f.from(1, 1, 1);
-        this.rotation = Vector3f.from(0, 0, 0);
-        this.qScale = 1F;
-        this.validQScale = false;
-        this.rotationUpdated = false;
+        config = GeyserDisplayEntity.getExtension().getConfigManager().getConfig().getConfigurationSection("general");
 
-        this.propertyManager.add("geyser:t_x", this.translation.getX() * 10);
-        this.propertyManager.add("geyser:t_y", this.translation.getY() * 10);
-        this.propertyManager.add("geyser:t_z", this.translation.getZ() * 10);
+        item = ItemData.AIR;
+        translation = Vector3f.from(0, 0, 0);
+        scale = Vector3f.from(1, 1, 1);
+        rotation = Vector3f.from(0, 0, 0);
+        qScale = 1F;
+        validQScale = false;
+        rotationUpdated = false;
 
-        this.propertyManager.add("geyser:s_x", this.scale.getX());
-        this.propertyManager.add("geyser:s_y", this.scale.getY());
-        this.propertyManager.add("geyser:s_z", this.scale.getZ());
+        propertyManager.add("geyser:t_x", translation.getX() * 10);
+        propertyManager.add("geyser:t_y", translation.getY() * 10);
+        propertyManager.add("geyser:t_z", translation.getZ() * 10);
 
-        if (this.config == null) this.config = GeyserDisplayEntity.getExtension().getConfigManager().getConfig().getConfigurationSection("general");
-        if (this.config.getBoolean("vanilla-scale")) applyScale();
+        propertyManager.add("geyser:s_x", scale.getX());
+        propertyManager.add("geyser:s_y", scale.getY());
+        propertyManager.add("geyser:s_z", scale.getZ());
 
-        this.propertyManager.add("geyser:r_x", MathUtils.wrapDegrees(this.rotation.getX()));
-        this.propertyManager.add("geyser:r_y", MathUtils.wrapDegrees(-this.rotation.getY()));
-        this.propertyManager.add("geyser:r_z", MathUtils.wrapDegrees(-this.rotation.getZ()));
+        if (config.getBoolean("vanilla-scale")) applyScale();
 
-        this.propertyManager.add("geyser:s_q", this.qScale);
+        propertyManager.add("geyser:r_x", MathUtils.wrapDegrees(rotation.getX()));
+        propertyManager.add("geyser:r_y", MathUtils.wrapDegrees(-rotation.getY()));
+        propertyManager.add("geyser:r_z", MathUtils.wrapDegrees(-rotation.getZ()));
+
+        propertyManager.add("geyser:s_q", qScale);
 
         updateBedrockEntityProperties();
     }
 
     @Override
     public void updateBedrockEntityProperties() {
-        if (!this.valid) return;
+        if (!valid) return;
 
-        if (this.propertyManager.hasProperties()) {
-            this.rotationUpdated = false;
-            this.propertyManager.add("geyser:s_id", (int) (Math.random() * 1000000F));
+        if (propertyManager.hasProperties()) {
+            rotationUpdated = false;
+            propertyManager.add("geyser:s_id", (int) (Math.random() * 1000000F));
         }
 
         super.updateBedrockEntityProperties();
@@ -92,9 +93,9 @@ public class SlotDisplayEntity extends Entity {
 
     public void setTranslation(EntityMetadata<Vector3f, ?> entityMetadata) {
         this.translation = entityMetadata.getValue();
-        this.propertyManager.add("geyser:t_x", this.translation.getX() * 10);
-        this.propertyManager.add("geyser:t_y", this.translation.getY() * 10);
-        this.propertyManager.add("geyser:t_z", this.translation.getZ() * 10);
+        propertyManager.add("geyser:t_x", translation.getX() * 10);
+        propertyManager.add("geyser:t_y", translation.getY() * 10);
+        propertyManager.add("geyser:t_z", translation.getZ() * 10);
     }
 
     public void setScale(EntityMetadata<Vector3f, ?> entityMetadata) {
@@ -102,11 +103,10 @@ public class SlotDisplayEntity extends Entity {
 
         if (config.getBoolean("vanilla-scale")) applyScale();
 
-        this.propertyManager.add("geyser:s_x", this.scale.getX());
-        this.propertyManager.add("geyser:s_y", this.scale.getY());
-        this.propertyManager.add("geyser:s_z", this.scale.getZ());
+        propertyManager.add("geyser:s_x", scale.getX());
+        propertyManager.add("geyser:s_y", scale.getY());
+        propertyManager.add("geyser:s_z", scale.getZ());
     }
-
 
     protected void applyScale() {
         Vector3f vector3f = this.scale;
@@ -118,7 +118,7 @@ public class SlotDisplayEntity extends Entity {
         Quaternionf quaternion = entityMetadata.getValue();
         this.lastLeft = quaternion;
         setRotation(quaternion);
-        this.rotationUpdated = true;
+        rotationUpdated = true;
         applyBedrockYawPitchFromCombined();
     }
 
@@ -126,7 +126,7 @@ public class SlotDisplayEntity extends Entity {
         Quaternionf quaternion = entityMetadata.getValue();
         this.lastRight = quaternion;
         setRotation(quaternion);
-        this.rotationUpdated = true;
+        rotationUpdated = true;
         applyBedrockYawPitchFromCombined();
     }
 
@@ -135,22 +135,22 @@ public class SlotDisplayEntity extends Entity {
         Vector3f r = toEulerZYX(q);
 
         // this.scale = scale.mul(s);
-        if (this.rotationUpdated) {
-            this.rotation = this.rotation.add(r);
+        if (rotationUpdated) {
+            this.rotation = rotation.add(r);
         } else {
             this.rotation = r;
         }
 
-        this.propertyManager.add("geyser:r_x", MathUtils.wrapDegrees(this.rotation.getX()));
-        this.propertyManager.add("geyser:r_y", MathUtils.wrapDegrees(-this.rotation.getY()));
-        this.propertyManager.add("geyser:r_z", MathUtils.wrapDegrees(-this.rotation.getZ()));
+        propertyManager.add("geyser:r_x", MathUtils.wrapDegrees(rotation.getX()));
+        propertyManager.add("geyser:r_y", MathUtils.wrapDegrees(-rotation.getY()));
+        propertyManager.add("geyser:r_z", MathUtils.wrapDegrees(-rotation.getZ()));
 
         this.qScale = s;
-        this.propertyManager.add("geyser:s_q", this.qScale);
+        propertyManager.add("geyser:s_q", qScale);
     }
 
     protected void applyBedrockYawPitchFromCombined() {
-        Quaternionf combined = Quaternionf.from(this.lastLeft).mul(this.lastRight).normalize();
+        Quaternionf combined = Quaternionf.from(lastLeft).mul(lastRight).normalize();
 
         Vector3f fwd = combined.rotate(0f, 0f, 1f);
         float yawDeg = (float) Math.toDegrees(Math.atan2(-fwd.getX(), fwd.getZ()));
@@ -162,11 +162,11 @@ public class SlotDisplayEntity extends Entity {
         setPitch(pitchDeg);
 
         MoveEntityAbsolutePacket rotPkt = new MoveEntityAbsolutePacket();
-        rotPkt.setRuntimeEntityId(this.geyserId);
-        rotPkt.setPosition(this.position);
+        rotPkt.setRuntimeEntityId(geyserId);
+        rotPkt.setPosition(position);
         rotPkt.setRotation(getBedrockRotation());
         rotPkt.setTeleported(false);
-        this.session.sendUpstreamPacket(rotPkt);
+        session.sendUpstreamPacket(rotPkt);
     }
 
     protected Vector3f toEulerZYX(Quaternionf q) {
@@ -203,9 +203,9 @@ public class SlotDisplayEntity extends Entity {
     }
 
     protected void hackRotation(float x, float y, float z) {
-        this.propertyManager.add("geyser:r_x", x);
-        this.propertyManager.add("geyser:r_y", y);
-        this.propertyManager.add("geyser:r_z", z);
+        propertyManager.add("geyser:r_x", x);
+        propertyManager.add("geyser:r_y", y);
+        propertyManager.add("geyser:r_z", z);
         updateBedrockEntityProperties();
     }
 }
