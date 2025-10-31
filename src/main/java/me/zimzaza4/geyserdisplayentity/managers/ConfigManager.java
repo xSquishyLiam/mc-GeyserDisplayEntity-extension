@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 public class ConfigManager {
 
-    private FileConfiguration config;
+    private FileConfiguration config, lang;
 
     private HashMap<String, FileConfiguration> configMappingsCache;
 
@@ -21,6 +21,7 @@ public class ConfigManager {
 
     public void load() {
         this.config = new FileConfiguration("config.yml");
+        this.lang = new FileConfiguration("Lang/messages.yml");
 
         FileUtils.createFiles(GeyserDisplayEntity.getExtension(), "Mappings/example.yml");
 
@@ -42,6 +43,10 @@ public class ConfigManager {
 
     public FileConfiguration getConfig() {
         return config;
+    }
+
+    public FileConfiguration getLang() {
+        return lang;
     }
 
     public HashMap<String, FileConfiguration> getConfigMappingsCache() {

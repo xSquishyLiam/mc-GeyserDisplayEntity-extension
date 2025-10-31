@@ -7,6 +7,9 @@ import me.zimzaza4.geyserdisplayentity.managers.ConfigManager;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.event.subscribe.Subscribe;
+import org.geysermc.geyser.api.command.Command;
+import org.geysermc.geyser.api.command.CommandSource;
+import org.geysermc.geyser.api.event.lifecycle.GeyserDefineCommandsEvent;
 import org.geysermc.geyser.api.event.lifecycle.GeyserDefineEntityPropertiesEvent;
 import org.geysermc.geyser.api.event.lifecycle.GeyserPostInitializeEvent;
 import org.geysermc.geyser.api.extension.Extension;
@@ -115,6 +118,21 @@ public class GeyserDisplayEntity implements Extension {
         }
 
         logger().info("Done");
+    }
+
+    @Subscribe
+    public void onDefineCommand(GeyserDefineCommandsEvent event) {
+        event.register(Command.builder(this)
+                .name("reload")
+                .source(CommandSource.class)
+                .playerOnly(false)
+                .description("GeyserDisplayEntity Reload Command")
+                .permission("geyserdisplayentity.commands.reload")
+                .executor((source, command, args) -> {
+                    configManager.load();
+                    source.sendMessage(configManager.getLang().getString("commands.geyserdisplayentity.reload.successfully-reloaded"));
+                })
+                .build());
     }
 
     public void registerIdentifier(String id) {
