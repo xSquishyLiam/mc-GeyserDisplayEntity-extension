@@ -4,6 +4,7 @@ import me.zimzaza4.geyserdisplayentity.GeyserDisplayEntity;
 import me.zimzaza4.geyserdisplayentity.type.DisplayType;
 import me.zimzaza4.geyserdisplayentity.util.DeltaUtils;
 import me.zimzaza4.geyserdisplayentity.util.FileConfiguration;
+import me.zimzaza4.geyserdisplayentity.util.FileUtils;
 import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.protocol.bedrock.data.entity.EntityDataTypes;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ContainerId;
@@ -22,6 +23,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.item.component.CustomModelD
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponentTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponents;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -70,24 +72,27 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
         DataComponents components = stack.getDataComponentsPatch();
         if (components != null) modelData = components.get(DataComponentTypes.CUSTOM_MODEL_DATA);
 
-        FileConfiguration mappingsConfig = GeyserDisplayEntity.getExtension().getConfigManager().getConfig().getConfigurationSection("mappings");
+        for (File file : FileUtils.getAllFiles(GeyserDisplayEntity.getExtension().dataFolder().resolve("Mappings").toFile(), ".yml")) {
+            FileConfiguration mappingsConfigFile = new FileConfiguration(file.getName());
+            FileConfiguration mappingsConfig = mappingsConfigFile.getConfigurationSection("mappings");
 
-        for (Object mappingKey : mappingsConfig.getRootNode().childrenMap().keySet()) {
-            String mappingString = mappingKey.toString();
-            FileConfiguration mappingConfig = mappingsConfig.getConfigurationSection(mappingString);
-            if (mappingConfig == null) continue;
-            if (!mappingConfig.getString("type").equals(type)) continue;
+            for (Object mappingKey : mappingsConfig.getRootNode().childrenMap().keySet()) {
+                String mappingString = mappingKey.toString();
+                FileConfiguration mappingConfig = mappingsConfig.getConfigurationSection(mappingString);
+                if (mappingConfig == null) continue;
+                if (!mappingConfig.getString("type").equals(type)) continue;
 
-            if (mappingConfig.getInt("model-data") == -1) {
-                config = mappingConfig.getConfigurationSection("displayentityoptions");
-                setOffset(config.getDouble("y-offset"));
-                break;
-            }
+                if (mappingConfig.getInt("model-data") == -1) {
+                    config = mappingConfig.getConfigurationSection("displayentityoptions");
+                    setOffset(config.getDouble("y-offset"));
+                    break;
+                }
 
-            if (modelData != null && Math.abs(mappingConfig.getInt("model-data") - modelData.floats().get(0)) < 0.5) {
-                config = mappingConfig.getConfigurationSection("displayentityoptions");
-                setOffset(config.getDouble("y-offset"));
-                break;
+                if (modelData != null && Math.abs(mappingConfig.getInt("model-data") - modelData.floats().get(0)) < 0.5) {
+                    config = mappingConfig.getConfigurationSection("displayentityoptions");
+                    setOffset(config.getDouble("y-offset"));
+                    break;
+                }
             }
         }
     
@@ -111,13 +116,13 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
             needHide = false;
         }
     
-        updateMainHand(this.session);
+        updateMainHand(session);
     }
 
     @Override
     protected void applyScale() {
         if (needHide) {
-            this.dirtyMetadata.put(EntityDataTypes.SCALE, 0f);
+            dirtyMetadata.put(EntityDataTypes.SCALE, 0f);
         } else {
             super.applyScale();
         }
@@ -125,10 +130,10 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
 
     @Override
     public void updateMainHand(GeyserSession session) {
-        if (!this.valid) return;
+        if (!valid) return;
 
         ItemData helmet = ItemData.AIR; // TODO
-        ItemData chest = this.item;
+        ItemData chest = item;
 
         if (custom && !config.getBoolean("hand")) {
             MobArmorEquipmentPacket armorEquipmentPacket = new MobArmorEquipmentPacket();
