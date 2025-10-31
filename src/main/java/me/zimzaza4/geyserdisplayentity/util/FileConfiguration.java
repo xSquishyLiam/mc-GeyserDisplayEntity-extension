@@ -32,18 +32,9 @@ public class FileConfiguration {
 
     private CommentedConfigurationNode load(String fileName) {
         try {
-            if (!Files.exists(this.dataDirectory)) Files.createDirectories(this.dataDirectory);
+            FileUtils.createFiles(extension, fileName);
 
             Path config = this.dataDirectory.resolve(fileName);
-
-            if (!Files.exists(config)) {
-                try (InputStream resourceAsStream = this.extension.getClass().getClassLoader().getResourceAsStream("Extension/" + fileName)) {
-                    Files.copy(resourceAsStream, config);
-                } catch (IOException err) {
-                    throw new RuntimeException(err);
-                }
-            }
-
             YamlConfigurationLoader loader = YamlConfigurationLoader.builder().path(config).build();
 
             return loader.load();

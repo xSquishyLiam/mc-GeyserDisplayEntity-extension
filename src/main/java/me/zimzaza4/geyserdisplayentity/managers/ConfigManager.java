@@ -20,7 +20,7 @@ public class ConfigManager {
 
     public void load() {
         this.config = new FileConfiguration("config.yml");
-//        this.lang = new FileConfiguration("Lang/messages.yml");
+        this.lang = new FileConfiguration("Lang/messages.yml");
 
         FileUtils.createFiles(GeyserDisplayEntity.getExtension(), "Mappings/example.yml");
 

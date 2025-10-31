@@ -30,10 +30,10 @@ public class GeyserDisplayEntity implements Extension {
 
     private static GeyserDisplayEntity extension;
 
+    private ConfigManager configManager;
+
     private static EntityDefinition<ItemDisplayEntity> ITEM_DISPLAY;
     private static EntityDefinition<BlockDisplayEntity> BLOCK_DISPLAY;
-
-    private ConfigManager configManager;
 
     public static final Integer MAX_VALUE = 1000000;
     public static final Integer MIN_VALUE = -1000000;
@@ -129,8 +129,8 @@ public class GeyserDisplayEntity implements Extension {
                 .description("GeyserDisplayEntity Reload Command")
                 .permission("geyserdisplayentity.commands.reload")
                 .executor((source, command, args) -> {
-//                    configManager.load();
-//                    source.sendMessage(configManager.getLang().getString("commands.geyserdisplayentity.reload.successfully-reloaded"));
+                    configManager.load();
+                    source.sendMessage(configManager.getLang().getString("commands.geyserdisplayentity.reload.successfully-reloaded"));
                 })
                 .build());
     }
