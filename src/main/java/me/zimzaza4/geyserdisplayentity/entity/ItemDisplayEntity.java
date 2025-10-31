@@ -72,10 +72,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
         DataComponents components = stack.getDataComponentsPatch();
         if (components != null) modelData = components.get(DataComponentTypes.CUSTOM_MODEL_DATA);
 
-        for (File file : FileUtils.getAllFiles(GeyserDisplayEntity.getExtension().dataFolder().resolve("Mappings").toFile(), ".yml")) {
-            FileConfiguration mappingsConfigFile = new FileConfiguration(file.getName());
-            FileConfiguration mappingsConfig = mappingsConfigFile.getConfigurationSection("mappings");
-
+        for (FileConfiguration mappingsConfig : GeyserDisplayEntity.getExtension().getConfigManager().getConfigMappingsCache().values()) {
             for (Object mappingKey : mappingsConfig.getRootNode().childrenMap().keySet()) {
                 String mappingString = mappingKey.toString();
                 FileConfiguration mappingConfig = mappingsConfig.getConfigurationSection(mappingString);
