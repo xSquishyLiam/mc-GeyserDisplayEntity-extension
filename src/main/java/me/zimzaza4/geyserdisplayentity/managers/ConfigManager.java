@@ -5,6 +5,7 @@ import me.zimzaza4.geyserdisplayentity.util.FileConfiguration;
 import me.zimzaza4.geyserdisplayentity.util.FileUtils;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.util.HashMap;
 
 public class ConfigManager {
@@ -22,7 +23,7 @@ public class ConfigManager {
         this.config = new FileConfiguration("config.yml");
         this.lang = new FileConfiguration("Lang/messages.yml");
 
-        FileUtils.createFiles(GeyserDisplayEntity.getExtension(), "Mappings/example.yml");
+        if (!Files.exists(GeyserDisplayEntity.getExtension().dataFolder())) FileUtils.createFiles(GeyserDisplayEntity.getExtension(), "Mappings/example.yml");
 
         loadConfigMappings();
     }
