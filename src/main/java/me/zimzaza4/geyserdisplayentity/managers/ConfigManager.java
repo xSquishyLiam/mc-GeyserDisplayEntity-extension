@@ -34,7 +34,7 @@ public class ConfigManager {
             FileConfiguration mappingsConfigFile = new FileConfiguration(file.getName());
             FileConfiguration mappingsConfig = mappingsConfigFile.getConfigurationSection("mappings");
 
-            configMappingsCache.put(file.getName().replace(".yml", ""), mappingsConfig);
+            tempConfigMappingsCache.put(file.getName().replace(".yml", ""), mappingsConfig);
         }
 
         configMappingsCache = tempConfigMappingsCache;
