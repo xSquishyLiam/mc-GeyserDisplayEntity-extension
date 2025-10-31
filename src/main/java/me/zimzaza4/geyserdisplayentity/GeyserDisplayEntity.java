@@ -129,8 +129,8 @@ public class GeyserDisplayEntity implements Extension {
                 .description("GeyserDisplayEntity Reload Command")
                 .permission("geyserdisplayentity.commands.reload")
                 .executor((source, command, args) -> {
-                    configManager.load();
-                    source.sendMessage(configManager.getLang().getString("commands.geyserdisplayentity.reload.successfully-reloaded"));
+//                    configManager.load();
+//                    source.sendMessage(configManager.getLang().getString("commands.geyserdisplayentity.reload.successfully-reloaded"));
                 })
                 .build());
     }

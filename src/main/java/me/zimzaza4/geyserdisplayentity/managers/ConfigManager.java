@@ -15,13 +15,12 @@ public class ConfigManager {
 
     public ConfigManager() {
         load();
-
         loadConfigMappings();
     }
 
     public void load() {
         this.config = new FileConfiguration("config.yml");
-        this.lang = new FileConfiguration("Lang/messages.yml");
+//        this.lang = new FileConfiguration("Lang/messages.yml");
 
         FileUtils.createFiles(GeyserDisplayEntity.getExtension(), "Mappings/example.yml");
 
@@ -32,7 +31,7 @@ public class ConfigManager {
         HashMap<String, FileConfiguration> tempConfigMappingsCache = new HashMap<>();
 
         for (File file : FileUtils.getAllFiles(GeyserDisplayEntity.getExtension().dataFolder().resolve("Mappings").toFile(), ".yml")) {
-            FileConfiguration mappingsConfigFile = new FileConfiguration(file.getName());
+            FileConfiguration mappingsConfigFile = new FileConfiguration("Mappings/" + file.getName());
             FileConfiguration mappingsConfig = mappingsConfigFile.getConfigurationSection("mappings");
 
             tempConfigMappingsCache.put(file.getName().replace(".yml", ""), mappingsConfig);
