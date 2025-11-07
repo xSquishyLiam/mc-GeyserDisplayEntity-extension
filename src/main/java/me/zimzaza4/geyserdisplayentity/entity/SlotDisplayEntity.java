@@ -55,7 +55,7 @@ public class SlotDisplayEntity extends Entity {
         item = ItemData.AIR;
         translation = Vector3f.from(0, 0, 0);
         scale = Vector3f.from(1, 1, 1);
-        rotation = Vector3f.from(0, 0, 0);
+        rotation = Vector3f.from(-180, 0, -180); // was 0, 0, 0 before - keeping note 2nd attempt
         qScale = 1F;
         validQScale = false;
         rotationUpdated = false;
@@ -70,9 +70,9 @@ public class SlotDisplayEntity extends Entity {
 
         if (config.getBoolean("vanilla-scale")) applyScale();
 
-        propertyManager.addProperty(new FloatProperty(Identifier.of("geyser:r_x"), 180F, -180F, 0F), MathUtils.wrapDegrees(rotation.getX() + 180F)); // Maybe
-        propertyManager.addProperty(new FloatProperty(Identifier.of("geyser:r_y"), 180F, -180F, 0F), MathUtils.wrapDegrees(-rotation.getY())); // Maybe
-        propertyManager.addProperty(new FloatProperty(Identifier.of("geyser:r_z"), 180F, -180F, 0F), MathUtils.wrapDegrees(-rotation.getZ() + 180F)); // Maybe
+        propertyManager.addProperty(new FloatProperty(Identifier.of("geyser:r_x"), 180F, -180F, 0F), MathUtils.wrapDegrees(rotation.getX()));
+        propertyManager.addProperty(new FloatProperty(Identifier.of("geyser:r_y"), 180F, -180F, 0F), MathUtils.wrapDegrees(-rotation.getY()));
+        propertyManager.addProperty(new FloatProperty(Identifier.of("geyser:r_z"), 180F, -180F, 0F), MathUtils.wrapDegrees(-rotation.getZ()));
 
         propertyManager.addProperty(new FloatProperty(Identifier.of("geyser:s_q"), MAX_VALUE, MIN_VALUE, 0F), qScale);
 
@@ -122,7 +122,7 @@ public class SlotDisplayEntity extends Entity {
 
     public void setLeftRotation(EntityMetadata<Quaternionf, ?> entityMetadata) {
         Quaternionf quaternion = entityMetadata.getValue();
-        this.lastLeft = quaternion;
+        lastLeft = quaternion;
         setRotation(quaternion);
         rotationUpdated = true;
         applyBedrockYawPitchFromCombined();
@@ -130,7 +130,7 @@ public class SlotDisplayEntity extends Entity {
 
     public void setRightRotation(EntityMetadata<Quaternionf, ?> entityMetadata) {
         Quaternionf quaternion = entityMetadata.getValue();
-        this.lastRight = quaternion;
+        lastRight = quaternion;
         setRotation(quaternion);
         rotationUpdated = true;
         applyBedrockYawPitchFromCombined();
@@ -147,9 +147,9 @@ public class SlotDisplayEntity extends Entity {
             this.rotation = r;
         }
 
-        propertyManager.addProperty(new FloatProperty(Identifier.of("geyser:r_x"), 180F, -180F, 0F), MathUtils.wrapDegrees(rotation.getX() + 180F)); // Maybe
-        propertyManager.addProperty(new FloatProperty(Identifier.of("geyser:r_y"), 180F, -180F, 0F), MathUtils.wrapDegrees(-rotation.getY())); // Maybe
-        propertyManager.addProperty(new FloatProperty(Identifier.of("geyser:r_z"), 180F, -180F, 0F), MathUtils.wrapDegrees(-rotation.getZ() + 180F)); // Maybe
+        propertyManager.addProperty(new FloatProperty(Identifier.of("geyser:r_x"), 180F, -180F, 0F), MathUtils.wrapDegrees(rotation.getX()));
+        propertyManager.addProperty(new FloatProperty(Identifier.of("geyser:r_y"), 180F, -180F, 0F), MathUtils.wrapDegrees(-rotation.getY()));
+        propertyManager.addProperty(new FloatProperty(Identifier.of("geyser:r_z"), 180F, -180F, 0F), MathUtils.wrapDegrees(-rotation.getZ()));
 
         this.qScale = s;
         propertyManager.addProperty(new FloatProperty(Identifier.of("geyser:s_q"), MAX_VALUE, MIN_VALUE, 0F), qScale);
