@@ -55,7 +55,7 @@ public class SlotDisplayEntity extends Entity {
         item = ItemData.AIR;
         translation = Vector3f.from(0, 0, 0);
         scale = Vector3f.from(1, 1, 1);
-        rotation = Vector3f.from(-180, 0, -180); // was 0, 0, 0 before - keeping note 2nd attempt
+        rotation = Vector3f.from(0, 0, 0);
         qScale = 1F;
         validQScale = false;
         rotationUpdated = false;

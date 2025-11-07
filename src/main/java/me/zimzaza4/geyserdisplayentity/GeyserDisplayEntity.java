@@ -26,6 +26,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.type.EntityType;
 import java.util.ArrayList;
 import java.util.List;
 
+// From Kastle's Geyser branch
 public class GeyserDisplayEntity implements Extension {
 
     private static GeyserDisplayEntity extension;
@@ -38,7 +39,6 @@ public class GeyserDisplayEntity implements Extension {
     public static final Integer MAX_VALUE = 1000000;
     public static final Integer MIN_VALUE = -1000000;
 
-    // From Kastle's Geyser branch
     @Subscribe
     public void onLoad(GeyserPostInitializeEvent event) {
         extension = this;
