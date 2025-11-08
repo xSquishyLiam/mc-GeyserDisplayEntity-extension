@@ -5,6 +5,7 @@ import me.zimzaza4.geyserdisplayentity.type.DisplayType;
 import me.zimzaza4.geyserdisplayentity.util.DeltaUtils;
 import me.zimzaza4.geyserdisplayentity.util.FileConfiguration;
 import me.zimzaza4.geyserdisplayentity.util.FileUtils;
+import org.cloudburstmc.math.imaginary.Quaternionf;
 import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.protocol.bedrock.data.entity.EntityDataTypes;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ContainerId;
@@ -16,6 +17,7 @@ import org.geysermc.geyser.entity.EntityDefinition;
 import org.geysermc.geyser.item.type.DyeableArmorItem;
 import org.geysermc.geyser.session.GeyserSession;
 import org.geysermc.geyser.translator.item.ItemTranslator;
+import org.geysermc.geyser.util.MathUtils;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.EntityMetadata;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.ByteEntityMetadata;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
@@ -203,12 +205,22 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
 
     public void moveAbsolute(Vector3f position, float yaw, float pitch, float headYaw, boolean isOnGround, boolean teleported) {
         double yOffset = config.getDouble("y-offset");
-    
+
         position = position.clone().add(0, yOffset, 0);
-    
+
+        Quaternionf combined = Quaternionf.from(lastLeft).mul(lastRight).normalize();
+
+        Vector3f fwd = combined.rotate(0f, 0f, 1f);
+        float yawDeg = (float) Math.toDegrees(Math.atan2(-fwd.getX(), fwd.getZ()));
+        float pitchDeg = (float) Math.toDegrees(Math.asin(MathUtils.clamp(fwd.getY(), -1f, 1f)));
+        yawDeg += getYaw();
+        yawDeg = MathUtils.wrapDegrees(yawDeg);
+        setYaw(yawDeg);
+        setHeadYaw(yawDeg);
+        setPitch(pitchDeg);
         setPosition(position);
         setOnGround(isOnGround);
-    
+
         MoveEntityAbsolutePacket moveEntityPacket = new MoveEntityAbsolutePacket();
         moveEntityPacket.setRuntimeEntityId(geyserId);
         moveEntityPacket.setPosition(position);
