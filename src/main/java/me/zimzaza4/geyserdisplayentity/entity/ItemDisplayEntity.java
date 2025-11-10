@@ -77,6 +77,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
         for (FileConfiguration mappingsConfig : GeyserDisplayEntity.getExtension().getConfigManager().getConfigMappingsCache().values()) {
             for (Object mappingKey : mappingsConfig.getRootNode().childrenMap().keySet()) {
                 String mappingString = mappingKey.toString();
+
                 FileConfiguration mappingConfig = mappingsConfig.getConfigurationSection(mappingString);
                 if (mappingConfig == null) continue;
                 if (!mappingConfig.getString("type").equals(type)) continue;

@@ -23,7 +23,7 @@ public class ConfigManager {
         this.config = new FileConfiguration("config.yml");
         this.lang = new FileConfiguration("Lang/messages.yml");
 
-        if (!Files.exists(GeyserDisplayEntity.getExtension().dataFolder())) FileUtils.createFiles(GeyserDisplayEntity.getExtension(), "Mappings/example.yml");
+        if (!Files.exists(GeyserDisplayEntity.getExtension().dataFolder().resolve("Mappings"))) FileUtils.createFiles(GeyserDisplayEntity.getExtension(), "Mappings/example.yml");
 
         loadConfigMappings();
     }
@@ -35,10 +35,12 @@ public class ConfigManager {
             FileConfiguration mappingsConfigFile = new FileConfiguration("Mappings/" + file.getName());
             FileConfiguration mappingsConfig = mappingsConfigFile.getConfigurationSection("mappings");
 
+            GeyserDisplayEntity.getExtension().logger().info("Loaded " + file.getName().replace(".yml", "") + " Mappings");
+
             tempConfigMappingsCache.put(file.getName().replace(".yml", ""), mappingsConfig);
         }
 
-        configMappingsCache = tempConfigMappingsCache;
+        this.configMappingsCache = tempConfigMappingsCache;
     }
 
     public FileConfiguration getConfig() {
