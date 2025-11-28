@@ -35,4 +35,4 @@ jobs:
           prerelease: false
           files: |
             build/libs/GeyserDisplayEntity*.jar
-            pack/*.mcpack
+            packs/*.mcpack

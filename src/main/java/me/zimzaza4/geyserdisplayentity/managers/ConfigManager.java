@@ -35,8 +35,6 @@ public class ConfigManager {
             FileConfiguration mappingsConfigFile = new FileConfiguration("Mappings/" + file.getName());
             FileConfiguration mappingsConfig = mappingsConfigFile.getConfigurationSection("mappings");
 
-            GeyserDisplayEntity.getExtension().logger().info("Loaded " + file.getName().replace(".yml", "") + " Mappings");
-
             tempConfigMappingsCache.put(file.getName().replace(".yml", ""), mappingsConfig);
         }
 

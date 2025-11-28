@@ -54,10 +54,10 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
             setInvisible(true);
             return;
         }
-    
+
         ItemData item = ItemTranslator.translateToBedrock(session, stack);
         this.item = item;
-    
+
         if (item instanceof DyeableArmorItem) {
             DataComponents data = stack.getDataComponentsPatch();
             if (data != null) {
@@ -67,9 +67,9 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
                 }
             }
         }
-    
+
         String type = session.getItemMappings().getMapping(stack.getId()).getJavaItem().javaIdentifier();
-    
+
         CustomModelData modelData = null;
         DataComponents components = stack.getDataComponentsPatch();
         if (components != null) modelData = components.get(DataComponentTypes.CUSTOM_MODEL_DATA);
@@ -95,7 +95,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
                 }
             }
         }
-    
+
         if (!item.getDefinition().getIdentifier().startsWith("minecraft:")) {
             custom = true;
             if (color != null) {
@@ -104,7 +104,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
         } else {
             custom = false;
         }
-    
+
         // HIDE_TYPES check only if stack is present (it is)
         String javaID = session.getItemMappings().getMapping(stack).getJavaItem().javaIdentifier();
 
@@ -115,7 +115,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
         } else {
             needHide = false;
         }
-    
+
         updateMainHand(session);
     }
 

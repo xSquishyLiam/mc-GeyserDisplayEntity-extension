@@ -117,6 +117,7 @@ public class SlotDisplayEntity extends Entity {
     protected void applyScale() {
         Vector3f vector3f = this.scale;
         float scale = (vector3f.getX() + vector3f.getY() + vector3f.getZ()) / 3;
+        if (config.getBoolean("vanilla-scale")) scale *= (float) config.getDouble("vanilla-scale-multiplier");
         this.dirtyMetadata.put(EntityDataTypes.SCALE, scale);
     }
 

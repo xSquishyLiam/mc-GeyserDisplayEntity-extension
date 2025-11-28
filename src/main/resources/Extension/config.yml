@@ -4,6 +4,7 @@ general:
   y-offset: -0.5
   # Use entity scale, instead of entity properties
   vanilla-scale: false
+  vanilla-scale-multiplier: 1
   # Equip custom items (items with custom mapping) to hand
   hand: false
 
