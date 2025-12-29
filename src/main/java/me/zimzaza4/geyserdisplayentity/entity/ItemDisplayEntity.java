@@ -70,8 +70,10 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
 
         String type = session.getItemMappings().getMapping(stack.getId()).getJavaItem().javaIdentifier();
 
+
         CustomModelData modelData = null;
         DataComponents components = stack.getDataComponentsPatch();
+
         if (components != null) modelData = components.get(DataComponentTypes.CUSTOM_MODEL_DATA);
 
         for (FileConfiguration mappingsConfig : GeyserDisplayEntity.getExtension().getConfigManager().getConfigMappingsCache().values()) {
@@ -85,12 +87,14 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
                 if (mappingConfig.getInt("model-data") == -1) {
                     config = mappingConfig.getConfigurationSection("displayentityoptions");
                     setOffset(config.getDouble("y-offset"));
+                    if (config.getBoolean("vanilla-scale")) applyScale();
                     break;
                 }
 
                 if (modelData != null && Math.abs(mappingConfig.getInt("model-data") - modelData.floats().get(0)) < 0.5) {
                     config = mappingConfig.getConfigurationSection("displayentityoptions");
                     setOffset(config.getDouble("y-offset"));
+                    if (config.getBoolean("vanilla-scale")) applyScale();
                     break;
                 }
             }

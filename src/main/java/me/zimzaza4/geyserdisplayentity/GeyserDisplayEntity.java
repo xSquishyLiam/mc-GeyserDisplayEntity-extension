@@ -12,6 +12,7 @@ import org.geysermc.geyser.api.command.CommandSource;
 import org.geysermc.geyser.api.event.lifecycle.GeyserDefineCommandsEvent;
 import org.geysermc.geyser.api.event.lifecycle.GeyserDefineEntityPropertiesEvent;
 import org.geysermc.geyser.api.event.lifecycle.GeyserPostInitializeEvent;
+import org.geysermc.geyser.api.event.lifecycle.GeyserPreInitializeEvent;
 import org.geysermc.geyser.api.extension.Extension;
 import org.geysermc.geyser.api.util.Identifier;
 import org.geysermc.geyser.entity.EntityDefinition;
@@ -40,7 +41,7 @@ public class GeyserDisplayEntity implements Extension {
     public static final Integer MIN_VALUE = -1000000;
 
     @Subscribe
-    public void onLoad(GeyserPostInitializeEvent event) {
+    public void onLoad(GeyserPreInitializeEvent event) {
         extension = this;
         loadManagers();
     }
