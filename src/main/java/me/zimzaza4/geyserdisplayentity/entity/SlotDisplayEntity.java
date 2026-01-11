@@ -13,6 +13,7 @@ import org.geysermc.geyser.api.util.Identifier;
 import org.geysermc.geyser.entity.EntityDefinition;
 import org.geysermc.geyser.entity.properties.type.FloatProperty;
 import org.geysermc.geyser.entity.properties.type.IntProperty;
+import org.geysermc.geyser.entity.spawn.EntitySpawnContext;
 import org.geysermc.geyser.entity.type.Entity;
 import org.geysermc.geyser.session.GeyserSession;
 import org.geysermc.geyser.util.MathUtils;
@@ -38,8 +39,8 @@ public class SlotDisplayEntity extends Entity {
     protected Quaternionf lastLeft = Quaternionf.IDENTITY;
     protected Quaternionf lastRight = Quaternionf.IDENTITY;
 
-    public SlotDisplayEntity(GeyserSession session, int entityId, long geyserId, UUID uuid, EntityDefinition<?> definition, Vector3f position, Vector3f motion, float yaw, float pitch, float headYaw) {
-        super(session, entityId, geyserId, uuid, definition, position, motion, yaw, pitch, headYaw);
+    public SlotDisplayEntity(EntitySpawnContext entitySpawnContext) {
+        super(entitySpawnContext);
     }
 
     public void updateMainHand(GeyserSession session) {

@@ -14,6 +14,7 @@ import org.cloudburstmc.protocol.bedrock.packet.MobArmorEquipmentPacket;
 import org.cloudburstmc.protocol.bedrock.packet.MobEquipmentPacket;
 import org.cloudburstmc.protocol.bedrock.packet.MoveEntityAbsolutePacket;
 import org.geysermc.geyser.entity.EntityDefinition;
+import org.geysermc.geyser.entity.spawn.EntitySpawnContext;
 import org.geysermc.geyser.item.type.DyeableArmorItem;
 import org.geysermc.geyser.session.GeyserSession;
 import org.geysermc.geyser.translator.item.ItemTranslator;
@@ -25,10 +26,8 @@ import org.geysermc.mcprotocollib.protocol.data.game.item.component.CustomModelD
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponentTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponents;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 public class ItemDisplayEntity extends SlotDisplayEntity {
 
@@ -38,12 +37,12 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
     private boolean needHide = false;
     private double lastOffset = 0;
 
-    public ItemDisplayEntity(GeyserSession session, int entityId, long geyserId, UUID uuid, EntityDefinition<?> definition, Vector3f position, Vector3f motion, float yaw, float pitch, float headYaw) {
-        super(session, entityId, geyserId, uuid, definition, position, motion, yaw, pitch, headYaw);
+    public ItemDisplayEntity(EntitySpawnContext entitySpawnContext) {
+        super(entitySpawnContext);
     }
 
     public void setOffset(double offset) {
-        moveRelative(0, offset - lastOffset, 0, pitch, yaw, false);
+        moveRelative(0, offset - lastOffset, 0, pitch, yaw, headYaw, false);
         this.lastOffset = offset;
     }
 
