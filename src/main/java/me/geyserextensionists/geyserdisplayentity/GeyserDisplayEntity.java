@@ -112,7 +112,6 @@ public class GeyserDisplayEntity implements Extension {
             Registries.ENTITY_DEFINITIONS.register(EntityType.ITEM_DISPLAY, ITEM_DISPLAY);
             registerIdentifier(ITEM_DISPLAY.identifier());
             registerIdentifier(BLOCK_DISPLAY.identifier());
-
         } catch (Throwable err) {
             logger().error("Error in load", err);
         }

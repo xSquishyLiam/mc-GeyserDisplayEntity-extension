@@ -31,10 +31,10 @@ public class SlotDisplayEntity extends Entity {
     protected boolean validQScale = false;
     protected boolean rotationUpdated = false;
 
-    protected FileConfiguration config;
-
     protected Quaternionf lastLeft = Quaternionf.IDENTITY;
     protected Quaternionf lastRight = Quaternionf.IDENTITY;
+
+    protected FileConfiguration getConfig = GeyserDisplayEntity.getExtension().getConfigManager().getConfig().getConfigurationSection("general");
 
     public SlotDisplayEntity(EntitySpawnContext entitySpawnContext) {
         super(entitySpawnContext);
@@ -47,8 +47,6 @@ public class SlotDisplayEntity extends Entity {
     @Override
     public void initializeMetadata() {
         super.initializeMetadata();
-
-        config = GeyserDisplayEntity.getExtension().getConfigManager().getConfig().getConfigurationSection("general");
 
         item = ItemData.AIR;
         translation = Vector3f.from(0, 0, 0);
@@ -66,7 +64,7 @@ public class SlotDisplayEntity extends Entity {
         propertyManager.addProperty(new FloatProperty(Identifier.of("geyser:s_y"), MAX_VALUE, MIN_VALUE, 0F), scale.getY());
         propertyManager.addProperty(new FloatProperty(Identifier.of("geyser:s_z"), MAX_VALUE, MIN_VALUE, 0F), scale.getZ());
 
-        if (config.getBoolean("vanilla-scale")) applyScale();
+        if (getConfig.getBoolean("vanilla-scale")) applyScale();
 
         propertyManager.addProperty(new FloatProperty(Identifier.of("geyser:r_x"), 180F, -180F, 0F), MathUtils.wrapDegrees(rotation.getX()));
         propertyManager.addProperty(new FloatProperty(Identifier.of("geyser:r_y"), 180F, -180F, 0F), MathUtils.wrapDegrees(-rotation.getY()));
@@ -105,7 +103,7 @@ public class SlotDisplayEntity extends Entity {
     public void setScale(EntityMetadata<Vector3f, ?> entityMetadata) {
         this.scale = entityMetadata.getValue();
 
-        if (config.getBoolean("vanilla-scale")) applyScale();
+        if (getConfig.getBoolean("vanilla-scale")) applyScale();
 
         propertyManager.addProperty(new FloatProperty(Identifier.of("geyser:s_x"), MAX_VALUE, MIN_VALUE, 0F), scale.getX());
         propertyManager.addProperty(new FloatProperty(Identifier.of("geyser:s_y"), MAX_VALUE, MIN_VALUE, 0F), scale.getY());
@@ -115,7 +113,7 @@ public class SlotDisplayEntity extends Entity {
     protected void applyScale() {
         Vector3f vector3f = this.scale;
         float scale = (vector3f.getX() + vector3f.getY() + vector3f.getZ()) / 3;
-        if (config.getBoolean("vanilla-scale")) scale *= (float) config.getDouble("vanilla-scale-multiplier");
+        if (getConfig.getBoolean("vanilla-scale")) scale *= (float) getConfig.getDouble("vanilla-scale-multiplier");
         this.dirtyMetadata.put(EntityDataTypes.SCALE, scale);
     }
 

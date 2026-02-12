@@ -52,7 +52,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
             return;
         }
 
-        config = GeyserDisplayEntity.getExtension().getConfigManager().getConfig().getConfigurationSection("general");
+        getConfig = GeyserDisplayEntity.getExtension().getConfigManager().getConfig().getConfigurationSection("general");
 
         ItemData item = ItemTranslator.translateToBedrock(session, stack);
         this.item = item;
@@ -144,9 +144,9 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
     }
 
     private void entityApplyDisplayConfig(FileConfiguration mappingConfig) {
-        config = mappingConfig.getConfigurationSection("displayentityoptions");
-        setOffset(config.getDouble("y-offset"));
-        if (config.getBoolean("vanilla-scale")) applyScale();
+        getConfig = mappingConfig.getConfigurationSection("displayentityoptions");
+        setOffset(getConfig.getDouble("y-offset"));
+        if (getConfig.getBoolean("vanilla-scale")) applyScale();
     }
 
     @Override
@@ -165,7 +165,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
         ItemData helmet = ItemData.AIR; // TODO
         ItemData chest = item;
 
-        if (custom && !config.getBoolean("hand")) {
+        if (custom && !getConfig.getBoolean("hand")) {
             MobArmorEquipmentPacket armorEquipmentPacket = new MobArmorEquipmentPacket();
             armorEquipmentPacket.setRuntimeEntityId(geyserId);
             armorEquipmentPacket.setHelmet(helmet);
@@ -235,7 +235,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
     }
 
     public void moveAbsolute(Vector3f position, float yaw, float pitch, float headYaw, boolean isOnGround, boolean teleported) {
-        double yOffset = config.getDouble("y-offset");
+        double yOffset = getConfig.getDouble("y-offset");
 
         position = position.clone().add(0, yOffset, 0);
 
