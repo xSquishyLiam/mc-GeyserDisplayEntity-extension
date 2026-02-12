@@ -1,8 +1,8 @@
 
-package me.zimzaza4.geyserdisplayentity.entity;
+package me.geyserextensionists.geyserdisplayentity.entity;
 
-import me.zimzaza4.geyserdisplayentity.GeyserDisplayEntity;
-import me.zimzaza4.geyserdisplayentity.util.FileConfiguration;
+import me.geyserextensionists.geyserdisplayentity.GeyserDisplayEntity;
+import me.geyserextensionists.geyserdisplayentity.util.FileConfiguration;
 import org.cloudburstmc.math.imaginary.Quaternionf;
 import org.cloudburstmc.math.matrix.Matrix3f;
 import org.cloudburstmc.math.vector.Vector3f;
@@ -10,7 +10,6 @@ import org.cloudburstmc.protocol.bedrock.data.entity.EntityDataTypes;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.packet.MoveEntityAbsolutePacket;
 import org.geysermc.geyser.api.util.Identifier;
-import org.geysermc.geyser.entity.EntityDefinition;
 import org.geysermc.geyser.entity.properties.type.FloatProperty;
 import org.geysermc.geyser.entity.properties.type.IntProperty;
 import org.geysermc.geyser.entity.spawn.EntitySpawnContext;
@@ -19,10 +18,8 @@ import org.geysermc.geyser.session.GeyserSession;
 import org.geysermc.geyser.util.MathUtils;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.EntityMetadata;
 
-import java.util.UUID;
-
-import static me.zimzaza4.geyserdisplayentity.GeyserDisplayEntity.MAX_VALUE;
-import static me.zimzaza4.geyserdisplayentity.GeyserDisplayEntity.MIN_VALUE;
+import static me.geyserextensionists.geyserdisplayentity.GeyserDisplayEntity.MAX_VALUE;
+import static me.geyserextensionists.geyserdisplayentity.GeyserDisplayEntity.MIN_VALUE;
 
 public class SlotDisplayEntity extends Entity {
 

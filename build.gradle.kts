@@ -1,10 +1,10 @@
 plugins {
     id("java")
-    id("io.github.goooler.shadow") version "8.1.7"
+    id("com.gradleup.shadow") version "9.2.2"
 }
 
-group = "me.zimzaza4"
-version = "1.0-SNAPSHOT"
+group = "me.geyserextensionists"
+version = "1.0.4"
 
 repositories {
     mavenCentral()
@@ -13,8 +13,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.geysermc.geyser:core:2.9.2-SNAPSHOT")
-    compileOnly("org.geysermc.geyser:api:2.9.2-SNAPSHOT")
+    compileOnly("org.geysermc.geyser:core:2.9.3-SNAPSHOT")
+    compileOnly("org.geysermc.geyser:api:2.9.3-SNAPSHOT")
 
     implementation("org.spongepowered:configurate-yaml:4.2.0-GeyserMC-SNAPSHOT")
 }
@@ -30,9 +30,18 @@ tasks.compileJava {
 tasks.shadowJar {
     archiveFileName.set("${rootProject.name}-${version}.jar")
 
-    relocate("org.spongepowered.configurate", "me.zimzaza4.geyserdisplayentity.libs.configurate")
+    relocate("org.spongepowered.configurate", "me.geyserextensionists.geyserdisplayentity.libs.configurate")
 }
 
 tasks.build {
     dependsOn("shadowJar")
+}
+
+tasks.processResources {
+    val props = mapOf("version" to version)
+    inputs.properties(props)
+    filteringCharset = "UTF-8"
+    filesMatching("extension.yml") {
+        expand(props)
+    }
 }

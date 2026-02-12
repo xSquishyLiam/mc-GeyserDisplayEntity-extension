@@ -1,4 +1,4 @@
-package me.zimzaza4.geyserdisplayentity.util;
+package me.geyserextensionists.geyserdisplayentity.util;
 
 public class DeltaUtils {
 

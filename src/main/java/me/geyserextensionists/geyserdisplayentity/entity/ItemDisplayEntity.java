@@ -1,10 +1,9 @@
-package me.zimzaza4.geyserdisplayentity.entity;
+package me.geyserextensionists.geyserdisplayentity.entity;
 
-import me.zimzaza4.geyserdisplayentity.GeyserDisplayEntity;
-import me.zimzaza4.geyserdisplayentity.type.DisplayType;
-import me.zimzaza4.geyserdisplayentity.util.DeltaUtils;
-import me.zimzaza4.geyserdisplayentity.util.FileConfiguration;
-import me.zimzaza4.geyserdisplayentity.util.FileUtils;
+import me.geyserextensionists.geyserdisplayentity.GeyserDisplayEntity;
+import me.geyserextensionists.geyserdisplayentity.type.DisplayType;
+import me.geyserextensionists.geyserdisplayentity.util.DeltaUtils;
+import me.geyserextensionists.geyserdisplayentity.util.FileConfiguration;
 import org.cloudburstmc.math.imaginary.Quaternionf;
 import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.protocol.bedrock.data.entity.EntityDataTypes;
@@ -13,7 +12,6 @@ import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.packet.MobArmorEquipmentPacket;
 import org.cloudburstmc.protocol.bedrock.packet.MobEquipmentPacket;
 import org.cloudburstmc.protocol.bedrock.packet.MoveEntityAbsolutePacket;
-import org.geysermc.geyser.entity.EntityDefinition;
 import org.geysermc.geyser.entity.spawn.EntitySpawnContext;
 import org.geysermc.geyser.item.type.DyeableArmorItem;
 import org.geysermc.geyser.session.GeyserSession;
@@ -42,7 +40,7 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
     }
 
     public void setOffset(double offset) {
-        moveRelative(0, offset - lastOffset, 0, pitch, yaw, headYaw, false);
+        moveRelative(0, offset - lastOffset, 0, yaw, pitch, headYaw, false);
         this.lastOffset = offset;
     }
 
@@ -53,6 +51,8 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
             setInvisible(true);
             return;
         }
+
+        config = GeyserDisplayEntity.getExtension().getConfigManager().getConfig().getConfigurationSection("general");
 
         ItemData item = ItemTranslator.translateToBedrock(session, stack);
         this.item = item;
@@ -69,13 +69,9 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
 
         String type = session.getItemMappings().getMapping(stack.getId()).getJavaItem().javaIdentifier();
 
-
-        CustomModelData modelData = null;
-        DataComponents components = stack.getDataComponentsPatch();
-
-        if (components != null) modelData = components.get(DataComponentTypes.CUSTOM_MODEL_DATA);
-
         for (FileConfiguration mappingsConfig : GeyserDisplayEntity.getExtension().getConfigManager().getConfigMappingsCache().values()) {
+            if (mappingsConfig == null) continue;
+
             for (Object mappingKey : mappingsConfig.getRootNode().childrenMap().keySet()) {
                 String mappingString = mappingKey.toString();
 
@@ -83,19 +79,13 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
                 if (mappingConfig == null) continue;
                 if (!mappingConfig.getString("type").equals(type)) continue;
 
-                if (mappingConfig.getInt("model-data") == -1) {
-                    config = mappingConfig.getConfigurationSection("displayentityoptions");
-                    setOffset(config.getDouble("y-offset"));
-                    if (config.getBoolean("vanilla-scale")) applyScale();
-                    break;
+                if (GeyserDisplayEntity.getExtension().getConfigManager().getConfig().getBoolean("general.use-legacy-models")) {
+                    applyLegacyModelData(stack, mappingConfig);
+                } else {
+                    applyModernItemModels(item, mappingConfig);
                 }
 
-                if (modelData != null && Math.abs(mappingConfig.getInt("model-data") - modelData.floats().get(0)) < 0.5) {
-                    config = mappingConfig.getConfigurationSection("displayentityoptions");
-                    setOffset(config.getDouble("y-offset"));
-                    if (config.getBoolean("vanilla-scale")) applyScale();
-                    break;
-                }
+                if (GeyserDisplayEntity.getExtension().getConfigManager().getConfig().getBoolean("settings.debug.per-player-load-mappings")) GeyserDisplayEntity.getExtension().logger().info("Loading Mappings: " + mappingString);
             }
         }
 
@@ -120,6 +110,43 @@ public class ItemDisplayEntity extends SlotDisplayEntity {
         }
 
         updateMainHand(session);
+    }
+
+    private void applyLegacyModelData(ItemStack item, FileConfiguration mappingConfig) {
+        CustomModelData modelData = null;
+        DataComponents components = item.getDataComponentsPatch();
+
+        if (components != null) modelData = components.get(DataComponentTypes.CUSTOM_MODEL_DATA);
+
+        if (mappingConfig.getInt("model-data") == -1) {
+            entityApplyDisplayConfig(mappingConfig);
+            return;
+        }
+
+        if (modelData == null) return;
+
+        if (Math.abs(mappingConfig.getInt("model-data") - modelData.floats().get(0)) < 0.5) {
+            entityApplyDisplayConfig(mappingConfig);
+        }
+    }
+
+    private void applyModernItemModels(ItemData itemData, FileConfiguration mappingConfig) {
+        String itemBedrockIdentifier = itemData.getDefinition().getIdentifier().replace("geyser_custom:", "");
+
+        if (mappingConfig.getString("item-identifier").equals("none")) {
+            entityApplyDisplayConfig(mappingConfig);
+            return;
+        }
+
+        if (mappingConfig.getString("item-identifier").equalsIgnoreCase(itemBedrockIdentifier)) {
+            entityApplyDisplayConfig(mappingConfig);
+        }
+    }
+
+    private void entityApplyDisplayConfig(FileConfiguration mappingConfig) {
+        config = mappingConfig.getConfigurationSection("displayentityoptions");
+        setOffset(config.getDouble("y-offset"));
+        if (config.getBoolean("vanilla-scale")) applyScale();
     }
 
     @Override

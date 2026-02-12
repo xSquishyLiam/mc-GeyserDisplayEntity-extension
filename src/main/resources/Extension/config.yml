@@ -1,5 +1,9 @@
 # General display options
 general:
+  # Uses the custom data model numbers (please switch to item models)
+  use-legacy-models: false
+  # The height of display entity
+  height: 1.7
   # The y-offset of display entity
   y-offset: -0.5
   # Use entity scale, instead of entity properties
@@ -12,3 +16,7 @@ general:
 hide-types:
   - "minecraft:leather_horse_armor"
   - "minecraft:bone"
+
+settings:
+  debug:
+    per-player-load-mappings: false

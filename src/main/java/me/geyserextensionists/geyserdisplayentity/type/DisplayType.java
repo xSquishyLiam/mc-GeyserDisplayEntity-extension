@@ -1,4 +1,4 @@
-package me.zimzaza4.geyserdisplayentity.type;
+package me.geyserextensionists.geyserdisplayentity.type;
 
 public enum DisplayType {
     NONE,

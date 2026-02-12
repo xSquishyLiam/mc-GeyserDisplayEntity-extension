@@ -1,6 +1,6 @@
-package me.zimzaza4.geyserdisplayentity.util;
+package me.geyserextensionists.geyserdisplayentity.util;
 
-import me.zimzaza4.geyserdisplayentity.GeyserDisplayEntity;
+import me.geyserextensionists.geyserdisplayentity.GeyserDisplayEntity;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,8 +1,8 @@
-package me.zimzaza4.geyserdisplayentity.managers;
+package me.geyserextensionists.geyserdisplayentity.managers;
 
-import me.zimzaza4.geyserdisplayentity.GeyserDisplayEntity;
-import me.zimzaza4.geyserdisplayentity.util.FileConfiguration;
-import me.zimzaza4.geyserdisplayentity.util.FileUtils;
+import me.geyserextensionists.geyserdisplayentity.GeyserDisplayEntity;
+import me.geyserextensionists.geyserdisplayentity.util.FileConfiguration;
+import me.geyserextensionists.geyserdisplayentity.util.FileUtils;
 
 import java.io.File;
 import java.nio.file.Files;

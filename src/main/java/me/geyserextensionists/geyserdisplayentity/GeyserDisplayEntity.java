@@ -1,9 +1,9 @@
-package me.zimzaza4.geyserdisplayentity;
+package me.geyserextensionists.geyserdisplayentity;
 
-import me.zimzaza4.geyserdisplayentity.entity.BlockDisplayEntity;
-import me.zimzaza4.geyserdisplayentity.entity.ItemDisplayEntity;
-import me.zimzaza4.geyserdisplayentity.entity.SlotDisplayEntity;
-import me.zimzaza4.geyserdisplayentity.managers.ConfigManager;
+import me.geyserextensionists.geyserdisplayentity.entity.BlockDisplayEntity;
+import me.geyserextensionists.geyserdisplayentity.entity.ItemDisplayEntity;
+import me.geyserextensionists.geyserdisplayentity.entity.SlotDisplayEntity;
+import me.geyserextensionists.geyserdisplayentity.managers.ConfigManager;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.event.subscribe.Subscribe;
@@ -11,7 +11,6 @@ import org.geysermc.geyser.api.command.Command;
 import org.geysermc.geyser.api.command.CommandSource;
 import org.geysermc.geyser.api.event.lifecycle.GeyserDefineCommandsEvent;
 import org.geysermc.geyser.api.event.lifecycle.GeyserDefineEntityPropertiesEvent;
-import org.geysermc.geyser.api.event.lifecycle.GeyserPostInitializeEvent;
 import org.geysermc.geyser.api.event.lifecycle.GeyserPreInitializeEvent;
 import org.geysermc.geyser.api.extension.Extension;
 import org.geysermc.geyser.api.util.Identifier;
@@ -52,8 +51,8 @@ public class GeyserDisplayEntity implements Extension {
             EntityDefinition<Entity> entityBase = EntityDefinition.builder(Entity::new)
                     .addTranslator(MetadataTypes.BYTE, Entity::setFlags)
                     .addTranslator(MetadataTypes.INT, Entity::setAir) // Air/bubbles
-                    .addTranslator(MetadataTypes.OPTIONAL_COMPONENT, Entity::setDisplayName)
-                    .addTranslator(MetadataTypes.BOOLEAN, Entity::setDisplayNameVisible)
+                    .addTranslator(MetadataTypes.OPTIONAL_COMPONENT, Entity::setCustomName)
+                    .addTranslator(MetadataTypes.BOOLEAN, Entity::setCustomNameVisible)
                     .addTranslator(MetadataTypes.BOOLEAN, Entity::setSilent)
                     .addTranslator(MetadataTypes.BOOLEAN, Entity::setGravity)
                     .addTranslator(MetadataTypes.POSE, (entity, entityMetadata) -> entity.setPose(entityMetadata.getValue()))
@@ -94,7 +93,7 @@ public class GeyserDisplayEntity implements Extension {
 
             BLOCK_DISPLAY = EntityDefinition.inherited(BlockDisplayEntity::new, slotDisplayBase)
                     .type(EntityType.BLOCK_DISPLAY)
-                    .height(1.975f).width(0.2f)
+                    .height(configManager.getConfig().getInt("general.height")).width(0.2f)
                     .propertiesBuilder(displayPropBuilder)
                     .identifier("geyser:block_display")
                     .addTranslator(MetadataTypes.BLOCK_STATE, BlockDisplayEntity::setDisplayedBlockState)
@@ -102,7 +101,7 @@ public class GeyserDisplayEntity implements Extension {
 
             ITEM_DISPLAY = EntityDefinition.inherited(ItemDisplayEntity::new, slotDisplayBase)
                     .type(EntityType.ITEM_DISPLAY)
-                    .height(1.975f).width(0.2f)
+                    .height(configManager.getConfig().getInt("general.height")).width(0.2f)
                     .propertiesBuilder(displayPropBuilder)
                     .identifier("geyser:item_display")
                     .addTranslator(MetadataTypes.ITEM_STACK, ItemDisplayEntity::setDisplayedItem)
@@ -114,8 +113,8 @@ public class GeyserDisplayEntity implements Extension {
             registerIdentifier(ITEM_DISPLAY.identifier());
             registerIdentifier(BLOCK_DISPLAY.identifier());
 
-        } catch (Throwable t) {
-            logger().error("Error in load", t);
+        } catch (Throwable err) {
+            logger().error("Error in load", err);
         }
 
         logger().info("Done");

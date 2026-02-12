@@ -1,6 +1,6 @@
-package me.zimzaza4.geyserdisplayentity.util;
+package me.geyserextensionists.geyserdisplayentity.util;
 
-import me.zimzaza4.geyserdisplayentity.GeyserDisplayEntity;
+import me.geyserextensionists.geyserdisplayentity.GeyserDisplayEntity;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
@@ -87,9 +87,9 @@ public class FileConfiguration {
         return node.getDouble();
     }
 
-    public double getLong(String path) {
+    public Long getLong(String path) {
         CommentedConfigurationNode node = getInternal(path);
-        if (node == null) return 0;
+        if (node == null) return 0L;
         return node.getLong();
     }
 
@@ -113,6 +113,10 @@ public class FileConfiguration {
     public boolean isBoolean(String path) {
         CommentedConfigurationNode node = getInternal(path);
         return node != null && node.raw() instanceof Boolean;
+    }
+
+    public boolean contains(String path) {
+        return getInternal(path) != null;
     }
 
     private CommentedConfigurationNode getInternal(String path) {
